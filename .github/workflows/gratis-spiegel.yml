@@ -1,0 +1,60 @@
+name: Freie Werkstatt aktualisieren
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "23 */6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/gratis-spiegel.yml"
+      - "tools/gratis_spiegel.py"
+      - "tools/test_gratis_spiegel.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gratis-spiegel-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Freigaberegeln offline prüfen
+        run: python3 -B -m unittest discover -s tools -p 'test_gratis_spiegel.py' -v
+
+  aktualisieren:
+    needs: pruefen
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: main
+      - name: Geprüfte Lieferung von der Werkstatt übernehmen
+        run: python3 -B tools/gratis_spiegel.py .
+      - name: Geänderte Produktdateien veröffentlichen
+        shell: bash
+        run: |
+          git add -A -- .claude-plugin/marketplace.json fassungen.json gpt/creator-profil paket skills/creator-profil.zip ugc-werkstatt/.claude-plugin/plugin.json ugc-werkstatt/skills/creator-profil werkzeug/safe-zones.html
+          if git diff --cached --quiet; then
+            echo "Die öffentlichen Dateien sind bereits aktuell."
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "Aktualisiere Creator-Profil und Safe-Zones"
+          git push origin HEAD:refs/heads/main
