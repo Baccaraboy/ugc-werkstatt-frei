@@ -1,0 +1,2676 @@
+<!doctype html>
+<!-- UX1, 17.11.2026: Eigene Medien behalten und direkt zu Vorschau, Markierung und Download gelangen. -->
+<html lang="de">
+  <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src blob:; media-src blob:; form-action 'none'; base-uri 'none'">
+<script>if(new URLSearchParams(location.search).get("in")==="werkstatt")document.documentElement.dataset.in="werkstatt"</script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Safe-Zone-Prüfer · UGC-Werkstatt</title>
+  
+<style>
+/* W9, 15.11.2026: Das Arbeitsblatt für Prüfstand und Browser-Werkzeuge. Beide bauen diese Datei wörtlich ein.
+   Auf Geräten ohne die erste Schrift übernehmen die lokal vorhandenen Schriften derselben Familie. */
+:root {
+  --abstand-1: 4px;
+  --abstand-2: 8px;
+  --abstand-3: 12px;
+  --abstand-4: 16px;
+  --abstand-5: 24px;
+  --abstand-6: 48px;
+  --bg: #ece3cf;
+  --flaeche: #f7f2e7;
+  --tinte: #1f1b16;
+  --grau: #6a6254;
+  --linie: #c9bda5;
+  --akzent: #1f1b16;
+  --akzent-text: #f7f2e7;
+  --geplant: #9a907e;
+  --arbeit: #e2b400;
+  --probe: #de3f78;
+  --rueck: #dd7a1c;
+  --laden: #2d9a58;
+  --auf-farbe: #1f1b16;
+  --fokus: #0055cc;
+  --schrift: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1814;
+    --flaeche: #262219;
+    --tinte: #f1eadb;
+    --grau: #b5aa95;
+    --linie: #4b4335;
+    --akzent: #f1eadb;
+    --akzent-text: #1b1814;
+    --geplant: #8a8170;
+    --arbeit: #e8c23a;
+    --probe: #f06a9b;
+    --rueck: #f0924a;
+    --laden: #4fbf7a;
+    --auf-farbe: #1b1814;
+    --fokus: #7fb3ff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1814;
+  --flaeche: #262219;
+  --tinte: #f1eadb;
+  --grau: #b5aa95;
+  --linie: #4b4335;
+  --akzent: #f1eadb;
+  --akzent-text: #1b1814;
+  --geplant: #8a8170;
+  --arbeit: #e8c23a;
+  --probe: #f06a9b;
+  --rueck: #f0924a;
+  --laden: #4fbf7a;
+  --auf-farbe: #1b1814;
+  --fokus: #7fb3ff;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--tinte);
+  font-family: var(--schrift);
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+:where(button, input, select, textarea) {
+  border-radius: 0;
+  box-shadow: none;
+  font: inherit;
+}
+
+/* W36a, 17.11.2026: Eine erkennbare Ablage und entfernbare Anhänge in den Farben des Arbeitsblatts.
+   BK1, 21.11.2026: Der Datei-Knopf ist ein Knopf im Stil der übrigen (Rahmen, eckig, mindestens 44 × 44 px). */
+.werkzeug-ablage {
+  margin-block: var(--abstand-3);
+  padding: var(--abstand-3);
+  border: 1px dashed var(--grau);
+  background: var(--flaeche);
+  overflow-wrap: anywhere;
+}
+.werkzeug-ablage .ablage-wahl {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: var(--abstand-2) var(--abstand-4);
+  border: 1px solid var(--tinte);
+  border-radius: 0;
+  background: var(--flaeche);
+  color: var(--tinte);
+  box-shadow: none;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 650;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.werkzeug-ablage .ablage-wahl:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.werkzeug-ablage .ablage-wahl:focus-visible {
+  outline: 3px solid var(--fokus);
+  outline-offset: 3px;
+}
+.werkzeug-ablage .ablage-tippen {
+  display: none;
+}
+/* Kein Tastenkürzel am Handy: dort steht nur, was der Knopf annimmt. */
+@media (pointer: coarse) {
+  .werkzeug-ablage .ablage-tastatur {
+    display: none;
+  }
+  .werkzeug-ablage .ablage-tippen {
+    display: inline;
+  }
+}
+.werkzeug-ablage p {
+  margin: var(--abstand-2) 0 0;
+}
+/* W53, 23.11.2026: Jede Karte zeigt Vorschau, Name, Größe und ein ×; die Tippfläche des × ist mindestens 44 × 44 px. */
+.werkzeug-ablage .ablage-karte {
+  display: flex;
+  align-items: center;
+  gap: var(--abstand-2);
+  margin-top: var(--abstand-2);
+  padding: var(--abstand-2);
+  border: 1px solid var(--linie);
+}
+.werkzeug-ablage .ablage-vorschau {
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid var(--linie);
+  background: var(--flaeche);
+  color: var(--tinte);
+}
+.werkzeug-ablage .ablage-angabe {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.werkzeug-ablage .ablage-groesse {
+  color: var(--grau);
+}
+.werkzeug-ablage .ablage-weg {
+  flex: none;
+  width: 2.75rem;
+  min-width: 2.75rem;
+  height: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--tinte);
+  border-radius: 0;
+  background: var(--flaeche);
+  color: var(--tinte);
+  box-shadow: none;
+  font: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.werkzeug-ablage .ablage-weg:hover {
+  background: var(--linie);
+}
+.werkzeug-ablage .ablage-weg:focus-visible {
+  outline: 3px solid var(--fokus);
+  outline-offset: 3px;
+}
+
+/* Die Schaltfläche zum Leeren erscheint, sobald eine eigene Eingabe oder ein Beispiel angezeigt wird. */
+.werkzeug-entwurf {
+  margin-block: var(--abstand-2) var(--abstand-3);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+.werkzeug-entwurf p {
+  margin-block: var(--abstand-2);
+}
+.werkzeug-entwurf .entwurf-link {
+  width: auto;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.1rem;
+  border: 0;
+  border-radius: 0.15rem;
+  color: inherit;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.werkzeug-entwurf .entwurf-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+/* Zuletzt, damit es gleich spezifische Anzeigeregeln oben überstimmt. */
+.werkzeug-entwurf[hidden],
+.werkzeug-entwurf [hidden],
+.werkzeug-entwurf .entwurf-status:empty {
+  display: none;
+}
+
+/* BK1, 21.11.2026 (Marius: «4 ok»): Eingebettet im Fenster der Website (Adresse mit ?in=werkstatt) stehen Name und Beschreibung
+   schon im Fensterkopf. Die Seite zeigt ihre Überschrift und den Satz darunter dann nicht noch einmal. Für Vorlesegeräte
+   bleibt die h1 (nur nicht zu sehen), «Beispiel laden» und alles Weitere bleiben. Gesetzt wird das Merkmal von einem kleinen
+   Skript im Kopf der Seite, vor dem ersten Bild – darum kein Flackern. */
+html[data-in="werkstatt"] main > header h1 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+html[data-in="werkstatt"] main > header h1 + p {
+  display: none;
+}
+
+/* UX1, 17.11.2026: Vorschau und Bedienfeld bleiben auch mit vergrößertem Text erreichbar. */
+main {
+  overflow-wrap: anywhere;
+  width: min(100%, 66rem);
+  margin: auto;
+  padding: clamp(1rem, 4vw, 3rem);
+}
+h1,
+h2,
+p {
+  margin: 0;
+}
+h1,
+h2,
+legend {
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+h1 {
+  font-size: clamp(2.35rem, 6.5vw, 4.5rem);
+}
+h2,
+legend {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+header {
+  border-bottom: 3px solid var(--tinte);
+  padding-bottom: var(--abstand-5);
+}
+header p,
+.hilfe,
+.werkzeuge section p,
+#videobereich p {
+  margin-top: var(--abstand-2);
+}
+.quelle {
+  margin: var(--abstand-5) 0;
+}
+.aktionen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--abstand-2);
+}
+button,
+.knopf {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: 1px solid var(--tinte);
+  padding: var(--abstand-2) var(--abstand-4);
+  background: var(--flaeche);
+  color: var(--tinte);
+  font-size: 1rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+button:not(:disabled):hover,
+.knopf:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.hauptaktion {
+  color: var(--akzent-text);
+  background: var(--akzent);
+}
+:focus-visible,
+#datei:focus-visible + label {
+  outline: 3px solid var(--fokus);
+  outline-offset: 2px;
+}
+#datei {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.hilfe,
+#exportstatus,
+#medienstatus {
+  font-size: 0.95rem;
+  color: var(--grau);
+}
+#medienstatus:not(:empty) {
+  margin-top: var(--abstand-2);
+  overflow-wrap: anywhere;
+}
+#videobereich {
+  background: var(--flaeche);
+  border: 1px solid var(--linie);
+  margin-top: var(--abstand-3);
+  padding: var(--abstand-4);
+}
+#video {
+  display: block;
+  width: min(100%, 32rem);
+  max-height: 20rem;
+  background: black;
+}
+#standbild {
+  margin-top: var(--abstand-2);
+}
+.blatt {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 23em), 1fr));
+  align-items: start;
+  gap: clamp(1rem, 3.4vw, 2.5rem);
+}
+.vorschaufeld {
+  display: grid;
+  justify-items: center;
+  background: var(--linie);
+  padding: var(--abstand-3);
+}
+#vorschau {
+  display: block;
+  width: min(100%, 20rem);
+  height: auto;
+  aspect-ratio: 9/16;
+  touch-action: none;
+  cursor: crosshair;
+}
+.werkzeuge {
+  min-width: 0;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+legend {
+  padding: 0;
+  margin-bottom: var(--abstand-2);
+}
+#plattformen label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--abstand-1);
+  padding-right: var(--abstand-3);
+  min-height: 44px;
+  cursor: pointer;
+  font-weight: 650;
+}
+#plattformen input {
+  accent-color: var(--tinte);
+  margin: 0;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+#stand {
+  margin: 0 0 var(--abstand-1);
+}
+.markierung,
+.export {
+  margin-top: var(--abstand-4);
+  border-top: 1px solid var(--linie);
+  padding-top: var(--abstand-4);
+}
+details {
+  margin: var(--abstand-3) 0;
+}
+summary {
+  min-height: 44px;
+  padding: var(--abstand-2) 0;
+  cursor: pointer;
+  font-weight: 650;
+}
+.werte {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8em), 1fr));
+  gap: var(--abstand-2);
+  margin: var(--abstand-3) 0;
+}
+.werte label {
+  font-weight: 650;
+  font-size: 1rem;
+}
+.werte input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin-top: var(--abstand-1);
+  padding: 0.4rem;
+  border: 1px solid var(--grau);
+  background: var(--flaeche);
+  color: var(--tinte);
+  font-weight: 400;
+}
+#warnung:not(:empty) {
+  border-left: 4px solid var(--linie);
+  padding: var(--abstand-2) var(--abstand-3);
+  background: var(--flaeche);
+}
+#warnung.treffer {
+  border-color: var(--rueck);
+}
+#loeschen,
+#png {
+  margin-top: var(--abstand-2);
+}
+button:disabled {
+  color: var(--grau);
+  border-color: var(--linie);
+  cursor: default;
+}
+[hidden] {
+  display: none !important;
+}
+@media (max-width: 42rem) {
+  .blatt {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--abstand-2);
+  }
+  #vorschau {
+    width: min(100%, 16rem);
+  }
+  .werkzeuge {
+    display: contents;
+  }
+  #plattformen {
+    grid-row: 1;
+  }
+  #stand {
+    grid-row: 2;
+  }
+  .vorschaufeld {
+    grid-row: 3;
+  }
+}
+
+/* W36c-3, 17.11.2026: Notizen und Bildablage im bestehenden Arbeitsblatt. */
+#ablage {
+  margin: var(--abstand-4) 0;
+}
+#material {
+  display: block;
+  width: 100%;
+  min-height: 6rem;
+  margin: var(--abstand-2) 0 var(--abstand-3);
+  padding: var(--abstand-3);
+  color: var(--tinte);
+  background: var(--flaeche);
+  border: 1px solid var(--grau);
+  font: inherit;
+  resize: vertical;
+}
+#einstieg {
+  margin-top: var(--abstand-3);
+}
+#massfehler:not(:empty) {
+  margin-top: var(--abstand-2);
+  padding-left: var(--abstand-2);
+  border-left: 3px solid var(--rueck);
+}
+.blatt > *,
+.werte > * {
+  min-width: 0;
+}
+#ablage input[type="file"],
+#ablage input::file-selector-button {
+  max-width: 100%;
+}
+#ablage input::file-selector-button {
+  white-space: normal;
+}
+
+</style>
+</head>
+  <body>
+    <main>
+      <header>
+        <h1>Safe-Zone-Prüfer</h1>
+        <p>Bleiben dein Produkt und deine Texte im Hochformat sichtbar?</p>
+        <div id="einstieg" class="aktionen">
+          <button type="button" id="beispiel">Beispiel laden</button>
+          <button type="button" id="eigene-eingabe" hidden>Eigene Eingabe</button>
+        </div>
+      </header>
+
+      <section class="quelle" aria-label="Bild oder Standbild laden">
+        <label for="material">Deine Notiz zum Bild (optional)</label>
+        <textarea id="material" rows="3" placeholder="Zum Beispiel: Der Produktname muss lesbar bleiben."></textarea>
+        <div id="ablage"></div>
+        <div class="aktionen">
+          <input id="datei" type="file" accept="video/*" />
+          <label for="datei" class="knopf hauptaktion">Video auswählen</label>
+        </div>
+        <p class="hilfe">
+          Die Vorschau zeigt den mittigen 9:16-Ausschnitt. Deine Notiz, dein Bild und dein Video bleiben auf deinem
+          Gerät.
+        </p>
+        <p id="medienstatus" role="status"></p>
+        <div id="videobereich" hidden>
+          <video id="video" controls playsinline preload="metadata" aria-label="Video für die Standbildauswahl"></video>
+          <p>Spule im Video zur gewünschten Stelle.</p>
+          <button type="button" id="standbild">Standbild übernehmen</button>
+        </div>
+      </section>
+
+      <div class="blatt">
+        <div class="vorschaufeld">
+          <canvas
+            id="vorschau"
+            width="1080"
+            height="1920"
+            aria-label="Vorschau im Hochformat mit schraffierten Plattformbereichen"
+            aria-describedby="warnung"
+            tabindex="-1"
+            role="img"
+          ></canvas>
+        </div>
+        <div class="werkzeuge">
+          <fieldset id="plattformen">
+            <legend>Plattform</legend>
+          </fieldset>
+          <p id="stand" class="hilfe"></p>
+          <p>
+            Schraffierte Flächen können durch Knöpfe und Text verdeckt sein. Die Position hängt von Gerät und Beitrag
+            ab.
+          </p>
+          <section class="markierung">
+            <h2>Text oder Produkt markieren</h2>
+            <p>Zieh im Bild ein Rechteck oder tippe nacheinander auf zwei gegenüberliegende Ecken.</p>
+            <details>
+              <summary>Rechteck über Werte eingeben</summary>
+              <p class="hilfe">Alle Werte in Prozent der Vorschau. Links und oben beginnen bei 0.</p>
+              <form id="masse">
+                <div class="werte">
+                  <label
+                    >Links (%)<input
+                      id="links"
+                      name="links"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="any"
+                      value="25"
+                      required
+                  /></label>
+                  <label
+                    >Oben (%)<input
+                      id="oben"
+                      name="oben"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="any"
+                      value="35"
+                      required
+                  /></label>
+                  <label
+                    >Breite (%)<input
+                      id="breite"
+                      name="breite"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="any"
+                      value="30"
+                      required
+                  /></label>
+                  <label
+                    >Höhe (%)<input
+                      id="hoehe"
+                      name="hoehe"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="any"
+                      value="20"
+                      required
+                  /></label>
+                </div>
+                <button>Markierung übernehmen</button>
+                <p id="massfehler" role="alert" tabindex="-1"></p>
+              </form>
+            </details>
+            <p id="warnung" role="status" tabindex="-1"></p>
+            <button type="button" id="loeschen" hidden>Markierung löschen</button>
+          </section>
+          <section class="export">
+            <h2>Für deinen Schnitt</h2>
+            <p>Nur die schraffierten Flächen, auf durchsichtigem Grund. 1080 × 1920 Pixel.</p>
+            <button type="button" id="png">Überlagerung als PNG</button>
+            <p id="exportstatus" role="status"></p>
+          </section>
+        </div>
+      </div>
+    </main>
+  <script type="application/json" id="beispieldaten">{"teepackung.json":"{\n  \"hinweis\": \"Erfundene Produktkarte für W17, 16.11.2026.\",\n  \"name\": \"Gartenpause\",\n  \"sorte\": \"Pfefferminze\",\n  \"art\": \"KRÄUTERTEE\",\n  \"hintergrund\": \"#ddd2b0\",\n  \"tisch\": \"#bd7650\",\n  \"packung\": \"#eaab74\",\n  \"tinte\": \"#263f35\"\n}\n"}</script>
+<script type="application/json" id="eichung">{"stand":"2026-11-17","werte":{"tiktok_oben":{"wert":0.09,"einheit":"TikTok: verdeckte Höhe oben","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"tiktok_unten":{"wert":0.24,"einheit":"TikTok: verdeckte Höhe unten","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"tiktok_rechts_ab":{"wert":0.82,"einheit":"TikTok: Knopfleiste rechts beginnt bei","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"tiktok_rechts_von":{"wert":0.34,"einheit":"TikTok: Knopfleiste rechts von (Höhe)","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"tiktok_rechts_bis":{"wert":0.76,"einheit":"TikTok: Knopfleiste rechts bis (Höhe)","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"reels_oben":{"wert":0.14,"einheit":"Instagram Reels: verdeckte Höhe oben","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"reels_unten":{"wert":0.35,"einheit":"Instagram Reels: verdeckte Höhe unten","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"reels_rechts_ab":{"wert":0.85,"einheit":"Instagram Reels: Knopfleiste rechts beginnt bei","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"reels_rechts_von":{"wert":0.46,"einheit":"Instagram Reels: Knopfleiste rechts von (Höhe)","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"reels_rechts_bis":{"wert":0.65,"einheit":"Instagram Reels: Knopfleiste rechts bis (Höhe)","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"shorts_oben":{"wert":0.1,"einheit":"YouTube Shorts: verdeckte Höhe oben","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"shorts_unten":{"wert":0.22,"einheit":"YouTube Shorts: verdeckte Höhe unten","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"shorts_rechts_ab":{"wert":0.8,"einheit":"YouTube Shorts: Knopfleiste rechts beginnt bei","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"shorts_rechts_von":{"wert":0.38,"einheit":"YouTube Shorts: Knopfleiste rechts von (Höhe)","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},"shorts_rechts_bis":{"wert":0.78,"einheit":"YouTube Shorts: Knopfleiste rechts bis (Höhe)","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"}},"regeln":[{"regel":"Produkt, Gesicht und Text gehören in die Mitte des Bilds. Oben, unten und rechts legt die Plattform Bedienflächen darüber.","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"},{"regel":"Die Zonen sind Näherungen: Textlänge, Gerät, Sprache und Anzeigenformat verschieben sie.","aus":"Näherung an der mobilen Ansicht der Plattform, Stand 15.11.2026 (W17); Anteil des 9:16-Bilds"}]}</script>
+<script type="module">
+// W36c-3, 17.11.2026: Geeichte Zonen und Handmarkierung im normierten mittigen 9:16-Ausschnitt.
+function plattformen$1(eichung) {
+  const wert = (name) => {
+    const zahl = eichung?.werte?.[name]?.wert;
+    if (!Number.isFinite(zahl) || zahl <= 0 || zahl >= 1) throw new Error("Die Eichung der Zonen fehlt.");
+    return zahl;
+  };
+  return [
+    ["tiktok", "TikTok", "Feed und Suche", "Profil und Reaktionen", "Name, Beschreibung und Ton"],
+    ["reels", "Instagram Reels", "Reels und Kamera", "Reaktionen und Teilen", "Profil, Beschreibung und Aufruf"],
+    ["shorts", "YouTube Shorts", "Navigation und Suche", "Bewerten, kommentieren und teilen", "Kanal, Titel und Ton"],
+  ].map(([kennung, name, oben, rechts, unten]) => {
+    const x = wert(kennung + "_rechts_ab"),
+      y = wert(kennung + "_rechts_von");
+    return {
+      kennung,
+      name,
+      stand: eichung.stand,
+      zonen: [
+        { name: oben, x: 0, y: 0, breite: 1, hoehe: wert(kennung + "_oben") },
+        { name: rechts, x, y, breite: 1 - x, hoehe: wert(kennung + "_rechts_bis") - y },
+        { name: unten, x: 0, y: 1 - wert(kennung + "_unten"), breite: 1, hoehe: wert(kennung + "_unten") },
+      ],
+    };
+  });
+}
+
+function rechteck(x1, y1, x2, y2) {
+  if (![x1, y1, x2, y2].every(Number.isFinite)) throw new Error("Die Koordinaten der Markierung sind ungültig.");
+  const begrenzen = (wert) => Math.max(0, Math.min(1, wert));
+  const x = begrenzen(Math.min(x1, x2));
+  const y = begrenzen(Math.min(y1, y2));
+  return { x, y, breite: begrenzen(Math.max(x1, x2)) - x, hoehe: begrenzen(Math.max(y1, y2)) - y };
+}
+
+function treffer(kennung, markierung, eichung) {
+  const plattform = plattformen$1(eichung).find((eintrag) => eintrag.kennung === kennung);
+  if (!plattform) throw new Error("Die gewählte Plattform ist unbekannt.");
+  if (!markierung || markierung.breite <= 0 || markierung.hoehe <= 0) return [];
+  return plattform.zonen.filter((zone) => {
+    const breite = Math.min(zone.x + zone.breite, markierung.x + markierung.breite) - Math.max(zone.x, markierung.x);
+    const hoehe = Math.min(zone.y + zone.hoehe, markierung.y + markierung.hoehe) - Math.max(zone.y, markierung.y);
+    // Beim Addieren zweier relativer Koordinaten kann auch eine bloße Berührung einen Rundungsrest hinterlassen.
+    return breite > Number.EPSILON && hoehe > Number.EPSILON;
+  });
+}
+
+function ausschnitt(bildBreite, bildHoehe) {
+  if (![bildBreite, bildHoehe].every((wert) => Number.isFinite(wert) && wert > 0))
+    throw new Error("Die Bildgröße ist ungültig.");
+  const breite = Math.min(bildBreite, (bildHoehe * 9) / 16);
+  const hoehe = Math.min(bildHoehe, (bildBreite * 16) / 9);
+  return { x: (bildBreite - breite) / 2, y: (bildHoehe - hoehe) / 2, breite, hoehe };
+}
+
+// W36a, 17.11.2026: Textdateien, Mailkörper und das Hauptdokument aus Word bleiben beim Lesen auf dem Gerät.
+function binaertext(bytes) {
+  const teile = [];
+  for (let i = 0; i < bytes.length; i += 16384) {
+    teile.push(String.fromCharCode(...bytes.subarray(i, i + 16384)));
+  }
+  return teile.join("");
+}
+
+function bytesAusText(text) {
+  return Uint8Array.from(text, (zeichen) => zeichen.charCodeAt(0));
+}
+
+function dateitext(bytes, zeichensatz) {
+  if (zeichensatz) return new TextDecoder(zeichensatz).decode(bytes);
+  if (bytes[0] === 255 && bytes[1] === 254) return new TextDecoder("utf-16le").decode(bytes);
+  if (bytes[0] === 254 && bytes[1] === 255) return new TextDecoder("utf-16be").decode(bytes);
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    return new TextDecoder("windows-1252").decode(bytes);
+  }
+}
+
+function koepfeUndText(teil) {
+  const grenze = teil.indexOf("\n\n");
+  if (grenze === -1) return { kopf: {}, leib: teil };
+  const kopf = {};
+  for (const zeile of teil
+    .slice(0, grenze)
+    .replace(/\n[ \t]+/g, " ")
+    .split("\n")) {
+    const doppelpunkt = zeile.indexOf(":");
+    if (doppelpunkt > 0) kopf[zeile.slice(0, doppelpunkt).toLowerCase()] = zeile.slice(doppelpunkt + 1).trim();
+  }
+  return { kopf, leib: teil.slice(grenze + 2) };
+}
+
+function dekodieren(transfer, rohdaten, charset) {
+  let text = rohdaten;
+  if (transfer === "base64") text = atob(text.replace(/\s/g, ""));
+  if (transfer === "quoted-printable") {
+    text = text.replace(/=\r?\n/g, "").replace(/=([\da-f]{2})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+  }
+  return dateitext(bytesAusText(text), charset);
+}
+
+function kopftext(wert) {
+  return dateitext(bytesAusText(wert))
+    .replace(/\?=\s+(?==\?)/g, "?=")
+    .replace(/=\?([^?]+)\?([qb])\?([^?]*)\?=/gi, (_, charset, art, inhalt) =>
+      art.toLowerCase() === "b"
+        ? dekodieren("base64", inhalt, charset)
+        : dekodieren("quoted-printable", inhalt.replaceAll("_", " "), charset),
+    );
+}
+
+function parameter(kopf, name) {
+  const treffer = kopf.match(new RegExp(";\\s*" + name + '\\s*=\\s*(?:"([^"]+)"|([^;\\s]+))', "i"));
+  return treffer?.[1] ?? treffer?.[2];
+}
+
+function mailteil(kopf, leib, tiefe) {
+  if (tiefe > 20) throw new Error("Die Mail enthält zu viele verschachtelte Teile.");
+  const typ = kopf["content-type"] ?? "text/plain";
+  if (/^attachment\b/i.test(kopf["content-disposition"] ?? "") || parameter(typ, "name")) return null;
+  if (/^multipart\//i.test(typ)) {
+    const grenze = parameter(typ, "boundary");
+    if (!grenze) throw new Error("Die einzelnen Teile der Mail lassen sich nicht trennen.");
+    const teile = [];
+    let zeilen;
+    for (const zeile of leib.split("\n")) {
+      const marke = zeile.trimEnd();
+      if (marke === "--" + grenze || marke === "--" + grenze + "--") {
+        if (zeilen) {
+          const teil = koepfeUndText(zeilen.join("\n"));
+          const gelesen = mailteil(teil.kopf, teil.leib, tiefe + 1);
+          if (gelesen?.text.trim()) {
+            if (gelesen.klartext && /^multipart\/alternative\b/i.test(typ)) return gelesen;
+            teile.push(gelesen);
+          }
+        }
+        if (marke === "--" + grenze + "--") break;
+        zeilen = [];
+      } else if (zeilen) zeilen.push(zeile);
+    }
+    if (/^multipart\/alternative\b/i.test(typ)) return teile.find((teil) => teil.klartext) ?? teile[0];
+    return { text: teile.map((teil) => teil.text).join("\n\n"), klartext: teile.some((teil) => teil.klartext) };
+  }
+  if (!/^text\/(?:plain|html)\b/i.test(typ)) return null;
+  const text = dekodieren(kopf["content-transfer-encoding"]?.toLowerCase(), leib, parameter(typ, "charset"));
+  if (/^text\/plain\b/i.test(typ)) return { text: text.trim(), klartext: true };
+  // Ein template hält auch verlinkte Mailbilder inaktiv. Keiner seiner Knoten wird ins Dokument übernommen.
+  const vorlage = document.createElement("template");
+  vorlage.innerHTML = text;
+  for (const verborgen of vorlage.content.querySelectorAll("script,style,template,title,head,noscript"))
+    verborgen.remove();
+  for (const block of vorlage.content.querySelectorAll("br,p,div,li,tr,h1,h2,h3,h4,blockquote")) block.after("\n");
+  return {
+    text: vorlage.content.textContent
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim(),
+    klartext: false,
+  };
+}
+
+function mailtext(bytes) {
+  const { kopf, leib } = koepfeUndText(binaertext(bytes).replace(/\r\n?/g, "\n"));
+  const zeilen = [];
+  for (const [name, titel] of [
+    ["from", "Von"],
+    ["to", "An"],
+    ["subject", "Betreff"],
+  ]) {
+    if (kopf[name]) zeilen.push(titel + ": " + kopftext(kopf[name]));
+  }
+  const inhalt = mailteil(kopf, leib, 0)?.text;
+  if (!inhalt?.trim()) throw new Error("Die Mail enthält keinen lesbaren Nachrichtentext.");
+  return [...(zeilen.length ? [zeilen.join("\n")] : []), inhalt].join("\n\n");
+}
+
+// ZIP und PDF können mit sehr wenig Platz riesige Texte ankündigen. Auch während des Entpackens begrenzen.
+async function entpacken(blob, verfahren, grenze) {
+  const leser = blob.stream().pipeThrough(new DecompressionStream(verfahren)).getReader();
+  const teile = [];
+  let menge = 0;
+  try {
+    while (true) {
+      const { done, value } = await leser.read();
+      if (done) return new Uint8Array(await new Blob(teile).arrayBuffer());
+      menge += value.length;
+      if (menge > grenze) {
+        await leser.cancel();
+        throw new Error("Die Datei enthält zu viel Text. Wähle einen kürzeren Ausschnitt.");
+      }
+      teile.push(value);
+    }
+  } finally {
+    leser.releaseLock();
+  }
+}
+
+async function bereich(blob, start, laenge) {
+  if (start < 0 || start + laenge > blob.size) throw new Error("Die Word-Datei ist unvollständig.");
+  return new DataView(await blob.slice(start, start + laenge).arrayBuffer());
+}
+
+async function hauptdokument(blob) {
+  // Das zentrale ZIP-Verzeichnis enthält die Größen auch bei Dateien mit nachgestellten Längenangaben.
+  const ende = await bereich(blob, Math.max(0, blob.size - 65557), Math.min(blob.size, 65557));
+  let pos = ende.byteLength - 22;
+  while (pos >= 0) {
+    if (ende.getUint32(pos, true) === 0x06054b50 && pos + 22 + ende.getUint16(pos + 20, true) === ende.byteLength)
+      break;
+    pos--;
+  }
+  if (pos < 0) throw new Error("Das ist keine lesbare Word-Datei.");
+  const anzahl = ende.getUint16(pos + 10, true);
+  const groesse = ende.getUint32(pos + 12, true);
+  if (groesse > 8 * 1024 * 1024) throw new Error("Die Word-Datei ist zu groß. Kopier den Text ins Feld.");
+  const liste = await bereich(blob, ende.getUint32(pos + 16, true), groesse);
+  let i = 0;
+  for (let nr = 0; nr < anzahl; nr++) {
+    if (i + 46 > liste.byteLength || liste.getUint32(i, true) !== 0x02014b50)
+      throw new Error("Die Word-Datei ist beschädigt.");
+    const nameLaenge = liste.getUint16(i + 28, true);
+    const name = new TextDecoder().decode(new Uint8Array(liste.buffer, i + 46, nameLaenge));
+    if (name === "word/document.xml") {
+      if (liste.getUint16(i + 8, true) & 1) throw new Error("Die Word-Datei ist geschützt.");
+      const ort = liste.getUint32(i + 42, true);
+      const kopf = await bereich(blob, ort, 30);
+      if (kopf.getUint32(0, true) !== 0x04034b50) throw new Error("Die Word-Datei ist beschädigt.");
+      const start = ort + 30 + kopf.getUint16(26, true) + kopf.getUint16(28, true);
+      const komprimiert = liste.getUint32(i + 20, true);
+      const groesseXml = liste.getUint32(i + 24, true);
+      if (groesseXml > 12 * 1024 * 1024) throw new Error("Die Word-Datei enthält zu viel Text.");
+      if (start + komprimiert > blob.size) throw new Error("Die Word-Datei ist unvollständig.");
+      const teil = blob.slice(start, start + komprimiert);
+      const art = liste.getUint16(i + 10, true);
+      if (art !== 0 && art !== 8) throw new Error("Diese Word-Datei lässt sich hier nicht entpacken.");
+      if (art === 0 && teil.size !== groesseXml) throw new Error("Die Word-Datei ist beschädigt.");
+      const bytes =
+        art === 0 ? new Uint8Array(await teil.arrayBuffer()) : await entpacken(teil, "deflate-raw", groesseXml);
+      if (bytes.length !== groesseXml) throw new Error("Die Word-Datei ist unvollständig.");
+      return dateitext(bytes);
+    }
+    i += 46 + nameLaenge + liste.getUint16(i + 30, true) + liste.getUint16(i + 32, true);
+  }
+  throw new Error("Die Word-Datei enthält kein Hauptdokument.");
+}
+
+async function wordtext(blob) {
+  const xml = await hauptdokument(blob);
+  if (/<!DOCTYPE/i.test(xml)) throw new Error("Dieses Word-Dokument lässt sich hier nicht lesen.");
+  const doc = new DOMParser().parseFromString(xml, "application/xml");
+  const ns = doc.documentElement.namespaceURI;
+  if (doc.documentElement.localName !== "document" || !ns)
+    throw new Error("Der Text in der Word-Datei ist beschädigt.");
+  const teile = [];
+  const knoten = doc.createTreeWalker(doc.documentElement, NodeFilter.SHOW_ELEMENT);
+  while (knoten.nextNode()) {
+    const el = knoten.currentNode;
+    if (el.namespaceURI !== ns) continue;
+    if (el.localName === "t") teile.push(el.textContent);
+    if (el.localName === "p" || el.localName === "br" || el.localName === "cr") teile.push("\n");
+    if (el.localName === "tab") teile.push("\t");
+  }
+  return teile.join("").trim();
+}
+
+// Liest Text von PDF-Seiten für die lokale Notiz.
+
+const unlesbar = () => new Error("Den Text dieser PDF kann der Browser nicht vollständig lesen.");
+const ref = /(\d+)\s+\d+\s+R\b/g;
+const decoder = new TextDecoder("windows-1252");
+const unicode = new TextDecoder("utf-16be");
+const hexBytes = (hex) =>
+  bytesAusText(
+    hex.replace(/\s/g, "").replace(/[\da-f]{1,2}/gi, (paar) => String.fromCharCode(parseInt(paar.padEnd(2, "0"), 16))),
+  );
+
+function ascii85(text) {
+  const aus = [];
+  let gruppe = [];
+  function sammeln() {
+    const anzahl = gruppe.length;
+    while (gruppe.length < 5) gruppe.push(84);
+    const zahl = gruppe.reduce((n, z) => n * 85 + z, 0);
+    if (zahl > 0xffffffff) throw unlesbar();
+    for (let i = 0; i < anzahl - 1; i++) aus.push((zahl >>> (24 - 8 * i)) & 255);
+    gruppe = [];
+  }
+  for (const z of text
+    .replace(/^\s*<~/, "")
+    .split("~>")[0]
+    .replace(/\s/g, "")) {
+    if (z === "z" && !gruppe.length) aus.push(0, 0, 0, 0);
+    else {
+      const n = z.charCodeAt(0) - 33;
+      if (n < 0 || n > 84) throw unlesbar();
+      gruppe.push(n);
+      if (gruppe.length === 5) sammeln();
+    }
+  }
+  if (gruppe.length === 1) throw unlesbar();
+  if (gruppe.length) sammeln();
+  return Uint8Array.from(aus);
+}
+
+function objekteLesen(rohdaten) {
+  const objekte = new Map();
+  const muster = /(?:^|[\r\n\s])(\d+)\s+(\d+)\s+obj\b/g;
+  for (let m; (m = muster.exec(rohdaten));) {
+    const start = muster.lastIndex;
+    const kopfende = /\bstream(?:\r\n|[\r\n])|\bendobj\b/g;
+    kopfende.lastIndex = start;
+    const ende = kopfende.exec(rohdaten);
+    if (!ende) throw unlesbar();
+    const kopf = rohdaten.slice(start, ende.index);
+    let daten;
+    if (ende[0].startsWith("stream")) {
+      const laenge = kopf.match(/\/Length\s+(\d+)\b(?!\s+\d+\s+R)/)?.[1];
+      const anfang = kopfende.lastIndex;
+      let bis = laenge === undefined ? -1 : anfang + Number(laenge);
+      if (bis < anfang || !/^\s*endstream\b/.test(rohdaten.slice(bis, bis + 24))) {
+        const stopp = rohdaten.indexOf("endstream", anfang);
+        if (stopp < 0) throw unlesbar();
+        bis = stopp;
+        if (rohdaten[bis - 1] === "\n") bis--;
+        if (rohdaten[bis - 1] === "\r") bis--;
+      }
+      daten = rohdaten.slice(anfang, bis);
+      const nachher = rohdaten.indexOf("endobj", bis);
+      if (nachher < 0) throw unlesbar();
+      muster.lastIndex = nachher + 6;
+    } else muster.lastIndex = kopfende.lastIndex;
+    objekte.set(Number(m[1]), { kopf, daten });
+  }
+  return objekte;
+}
+
+function zeichentabelle(inhalt) {
+  const zeichen = new Map();
+  const laengen = new Set();
+  function eintrag(hex, wert) {
+    if (zeichen.size >= 65536 || !hex.length || hex.length > 8 || hex.length % 2) throw unlesbar();
+    zeichen.set(hex.toUpperCase(), unicode.decode(hexBytes(wert)));
+    laengen.add(hex.length / 2);
+  }
+  for (const block of inhalt.matchAll(/beginbf(char|range)\b([\s\S]*?)endbf\1/g)) {
+    if (block[1] === "char") {
+      for (const m of block[2].matchAll(/<([\da-f]+)>\s*<([\da-f]+)>/gi)) eintrag(m[1], m[2]);
+      continue;
+    }
+    for (const m of block[2].matchAll(/<([\da-f]+)>\s*<([\da-f]+)>\s*(?:<([\da-f]+)>|\[([^\]]*)\])/gi)) {
+      const start = parseInt(m[1], 16);
+      const ende = parseInt(m[2], 16);
+      if (ende - start > 65535 || ende < start) throw unlesbar();
+      const werte = m[4] && [...m[4].matchAll(/<([\da-f]+)>/gi)].map((w) => w[1]);
+      for (let i = start; i <= ende; i++) {
+        const ziel = werte
+          ? werte[i - start]
+          : (BigInt("0x" + m[3]) + BigInt(i - start)).toString(16).padStart(m[3].length, "0");
+        if (!ziel) throw unlesbar();
+        eintrag(i.toString(16).padStart(m[1].length, "0"), ziel);
+      }
+    }
+  }
+  const breiten = [...laengen].sort((a, b) => b - a);
+  return (bytes) => {
+    const aus = [];
+    let i = 0;
+    while (i < bytes.length) {
+      let gefunden = false;
+      for (const n of breiten) {
+        if (i + n > bytes.length) continue;
+        const key = Array.from(bytes.subarray(i, i + n), (z) => z.toString(16).padStart(2, "0"))
+          .join("")
+          .toUpperCase();
+        if (!zeichen.has(key)) continue;
+        aus.push(zeichen.get(key));
+        i += n;
+        gefunden = true;
+        break;
+      }
+      if (!gefunden) throw unlesbar();
+    }
+    return aus.join("");
+  };
+}
+
+// Klammerstrings können ihrerseits Klammern, Oktal-Escapes oder fortgesetzte Zeilen enthalten.
+function zeichenkette(text, i) {
+  let tiefe = 1;
+  const daten = [];
+  while (tiefe && i < text.length) {
+    const z = text[i++];
+    if (z === "\\") {
+      const folge = text[i++];
+      if (folge === "\r" || folge === "\n") {
+        if (folge === "\r" && text[i] === "\n") i++;
+        continue;
+      }
+      if (/[0-7]/.test(folge)) {
+        let oktal = folge;
+        while (oktal.length < 3 && /[0-7]/.test(text[i] ?? "")) oktal += text[i++];
+        daten.push(parseInt(oktal, 8) & 255);
+      } else daten.push({ n: 10, r: 13, t: 9, b: 8, f: 12 }[folge] ?? folge.charCodeAt(0));
+    } else if (z === "(") {
+      tiefe++;
+      daten.push(40);
+    } else if (z === ")") {
+      if (--tiefe) daten.push(41);
+    } else daten.push(z.charCodeAt(0));
+  }
+  if (tiefe) throw unlesbar();
+  return { bytes: Uint8Array.from(daten), ende: i };
+}
+
+async function seitenText(text, schriften, zeichnung) {
+  const tokens = /%[^\r\n]*|\(|<<|<([\da-f\s]*)>|\[|\]|\/[^\s[\]()<>{}/%]+|[^\s[\]()<>{}/%]+/gi;
+  let aktiv = false,
+    schrift,
+    y;
+  let werte = [];
+  const aus = [];
+  for (let m; (m = tokens.exec(text));) {
+    const z = m[0];
+    if (z[0] === "%") continue;
+    if (z === "(") {
+      const s = zeichenkette(text, tokens.lastIndex);
+      tokens.lastIndex = s.ende;
+      if (aktiv) werte.push(s.bytes);
+      continue;
+    }
+    if (z === "BI") {
+      const ende = /[\s]EI\b/g;
+      ende.lastIndex = tokens.lastIndex;
+      if (!ende.exec(text)) throw unlesbar();
+      tokens.lastIndex = ende.lastIndex;
+    }
+    if (z === "BT") {
+      aktiv = true;
+      werte = [];
+      y = undefined;
+      continue;
+    }
+    if (!aktiv) {
+      if (z.startsWith("/")) werte = [z];
+      else {
+        if (z === "Do") aus.push(await zeichnung(werte[0]), "\n");
+        werte = [];
+      }
+      continue;
+    }
+    if (m[1] !== undefined) {
+      werte.push(hexBytes(m[1]));
+      continue;
+    }
+    if (z.startsWith("/") || /^[-+.\d]+$/.test(z)) {
+      werte.push(z);
+      continue;
+    }
+    if (z === "[" || z === "]") continue;
+    if (z === "Tf") schrift = schriften.get(werte.at(-2));
+    if (["T*", "'", '"', "ET"].includes(z) || (["TD", "Td"].includes(z) && Number(werte.at(-1)) !== 0)) aus.push("\n");
+    if (z === "Tm") {
+      const neu = Number(werte.at(-1));
+      if (y !== undefined && Math.abs(neu - y) > 0.1) aus.push("\n");
+      y = neu;
+    }
+    if (["Tj", "TJ", "'", '"'].includes(z)) {
+      if (!schrift) throw unlesbar();
+      for (const wert of werte) {
+        if (wert instanceof Uint8Array) aus.push(schrift(wert));
+        else if (z === "TJ" && Number(wert) < -100) aus.push(" ");
+      }
+    }
+    if (z === "ET") aktiv = false;
+    werte = [];
+  }
+  return aus
+    .join("")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+async function pdfText(bytes) {
+  const roh = binaertext(bytes);
+  if (!/^%PDF-[12]\.\d/.test(roh)) throw new Error("Das ist keine lesbare PDF.");
+  if (/\/Encrypt\s+(?:\d+\s+\d+\s+R|<<)/.test(roh)) throw new Error("Der PDF-Text ist geschützt.");
+  const objekte = objekteLesen(roh);
+  let rest = 16 * 1024 * 1024;
+  async function strom(obj) {
+    if (!obj || obj.daten === undefined) throw unlesbar();
+    if (obj.text !== undefined) return obj.text;
+    let daten = bytesAusText(obj.daten);
+    const filter = obj.kopf.match(/\/Filter\s*(\[[^\]]*\]|\/\w+)/)?.[1] ?? "";
+    for (const [art] of filter.matchAll(/\/\w+/g)) {
+      if (art === "/FlateDecode" || art === "/Fl") daten = await entpacken(new Blob([daten]), "deflate", rest);
+      else if (art === "/ASCII85Decode" || art === "/A85") daten = ascii85(binaertext(daten));
+      else if (art === "/ASCIIHexDecode" || art === "/AHx") daten = hexBytes(binaertext(daten).split(">")[0]);
+      else throw unlesbar();
+    }
+    rest -= daten.length;
+    if (rest < 0) throw unlesbar();
+    obj.text = binaertext(daten);
+    return obj.text;
+  }
+  // Neuere PDF-Schreiber bündeln auch die Seiten- und Schriftwörterbücher in komprimierten Objektströmen.
+  for (const obj of [...objekte.values()]) {
+    if (!/\/Type\s*\/ObjStm\b/.test(obj.kopf)) continue;
+    const text = await strom(obj);
+    const start = Number(obj.kopf.match(/\/First\s+(\d+)/)?.[1]);
+    const anzahl = Number(obj.kopf.match(/\/N\s+(\d+)/)?.[1]);
+    const index = text.slice(0, start).trim().split(/\s+/).map(Number);
+    if (index.length !== 2 * anzahl || start > text.length) throw unlesbar();
+    for (let i = 0; i < index.length; i += 2) {
+      if (!objekte.has(index[i]))
+        objekte.set(index[i], {
+          kopf: text.slice(start + index[i + 1], i + 3 < index.length ? start + index[i + 3] : undefined),
+        });
+    }
+  }
+  const wort = (nr) => objekte.get(Number(nr))?.kopf ?? "";
+  function woerterbuch(kopf, feld) {
+    const m = kopf.match(new RegExp("/" + feld + "\\s*(?:(\\d+)\\s+\\d+\\s+R\\b|<<)"));
+    if (!m) return "";
+    if (m[1]) return wort(m[1]);
+    const start = m.index + m[0].length;
+    const klammern = /<<|>>/g;
+    klammern.lastIndex = start;
+    let tiefe = 1;
+    for (let k; (k = klammern.exec(kopf));) {
+      tiefe += k[0] === "<<" ? 1 : -1;
+      if (!tiefe) return kopf.slice(start, k.index);
+    }
+    throw unlesbar();
+  }
+  const schriftCache = new Map();
+  async function schriftenFuer(ressourcen) {
+    const tabelle = new Map();
+    for (const m of woerterbuch(ressourcen, "Font").matchAll(/(\/[^\s/<>]+)\s+(\d+)\s+\d+\s+R/g)) {
+      if (!schriftCache.has(m[2])) {
+        const font = wort(m[2]);
+        const cmap = font.match(/\/ToUnicode\s+(\d+)\s+\d+\s+R/);
+        let lesen;
+        if (cmap) lesen = zeichentabelle(await strom(objekte.get(Number(cmap[1]))));
+        else if (
+          !/\/Subtype\s*\/Type0\b|\/Differences\b|\/Encoding\s+\d+\s+\d+\s+R|\/BaseFont\s*\/(?:Symbol|ZapfDingbats)\b/.test(
+            font,
+          )
+        ) {
+          const dec = /\/MacRomanEncoding\b/.test(font) ? new TextDecoder("macintosh") : decoder;
+          lesen = (bytes) => dec.decode(bytes);
+        }
+        schriftCache.set(m[2], lesen);
+      }
+      tabelle.set(m[1], schriftCache.get(m[2]));
+    }
+    return tabelle;
+  }
+  let verarbeiteteZeichen = 0;
+  async function zeichenfolge(code, res, vorfahren) {
+    verarbeiteteZeichen += code.length;
+    if (verarbeiteteZeichen > 32 * 1024 * 1024) throw unlesbar();
+    const formen = new Map(
+      [...woerterbuch(res, "XObject").matchAll(/(\/[^\s/<>]+)\s+(\d+)\s+\d+\s+R/g)].map((m) => [m[1], Number(m[2])]),
+    );
+    return seitenText(code, await schriftenFuer(res), async (name) => {
+      const nummer = formen.get(name);
+      const objekt = objekte.get(nummer);
+      if (!objekt) throw unlesbar();
+      if (/\/Subtype\s*\/Image\b/.test(objekt.kopf)) return "";
+      if (!/\/Subtype\s*\/Form\b/.test(objekt.kopf) || vorfahren.has(nummer) || vorfahren.size >= 30) throw unlesbar();
+      const eigeneRessourcen = woerterbuch(objekt.kopf, "Resources") || res;
+      return zeichenfolge(await strom(objekt), eigeneRessourcen, new Set([...vorfahren, nummer]));
+    });
+  }
+  const seiten = [];
+  const besucht = new Set();
+  async function seite(nr, erbe) {
+    if (besucht.has(nr) || besucht.size > 10000) throw unlesbar();
+    besucht.add(nr);
+    const kopf = wort(nr);
+    const res = woerterbuch(kopf, "Resources") || erbe;
+    if (/\/Type\s*\/Pages\b/.test(kopf)) {
+      const kinder = kopf.match(/\/Kids\s*\[([^\]]*)\]/)?.[1];
+      if (kinder === undefined) throw unlesbar();
+      for (const m of kinder.matchAll(ref)) await seite(Number(m[1]), res);
+      return;
+    }
+    if (!/\/Type\s*\/Page\b/.test(kopf)) throw unlesbar();
+    const inhalt = kopf.match(/\/Contents\s*(\[[^\]]*\]|\d+\s+\d+\s+R)/)?.[1];
+    if (!inhalt) return;
+    const codes = [];
+    for (const m of inhalt.matchAll(ref)) {
+      const objekt = objekte.get(Number(m[1]));
+      if (objekt?.daten === undefined && objekt?.kopf.trim().startsWith("[")) {
+        for (const teil of objekt.kopf.matchAll(ref)) codes.push(await strom(objekte.get(Number(teil[1]))));
+      } else codes.push(await strom(objekt));
+    }
+    seiten.push(await zeichenfolge(codes.join("\n"), res, new Set()));
+  }
+  const katalog = [...objekte.values()].find((o) => /\/Type\s*\/Catalog\b/.test(o.kopf));
+  const start = katalog?.kopf.match(/\/Pages\s+(\d+)\s+\d+\s+R/);
+  if (!start) throw unlesbar();
+  await seite(Number(start[1]), "");
+  return seiten.filter(Boolean).join("\n\n");
+}
+
+// Liest Notizen und ein lokales Bild für die Safe-Zones-Vorschau.
+
+const textArten = [".txt", ".md", ".eml", ".srt", ".vtt", ".csv", ".docx"];
+const bildArten = [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"];
+const groessterAnhang = 3 * 1024 * 1024;
+const bildSeite = 2000;
+const groessterText = 12 * 1024 * 1024;
+const frist = 30_000;
+
+async function bildLaden(datei, endung) {
+  try {
+    try {
+      return await createImageBitmap(datei, { imageOrientation: "from-image" });
+    } catch {
+      return await createImageBitmap(datei);
+    }
+  } catch {
+    throw new Error(
+      endung === ".heic" || endung === ".heif" ? "Dieses Format geht hier nicht." : "Das Bild lässt sich nicht lesen.",
+    );
+  }
+}
+
+// Das Bild wird neu gezeichnet: Drehung aus den Aufnahmedaten ist übernommen, Aufnahmedaten wie der Ort gehen nicht mit.
+async function alsJpeg(datei, endung) {
+  const bild = await bildLaden(datei, endung);
+  try {
+    const faktor = Math.min(1, bildSeite / Math.max(bild.width, bild.height));
+    const flaeche = document.createElement("canvas");
+    flaeche.width = Math.max(1, Math.round(bild.width * faktor));
+    flaeche.height = Math.max(1, Math.round(bild.height * faktor));
+    const stift = flaeche.getContext("2d");
+    if (!stift) throw new Error("Das Bild lässt sich hier nicht verkleinern.");
+    stift.fillStyle = "#fff";
+    stift.fillRect(0, 0, flaeche.width, flaeche.height);
+    stift.drawImage(bild, 0, 0, flaeche.width, flaeche.height);
+    let jpeg;
+    for (const guete of [0.85, 0.7, 0.55, 0.4]) {
+      jpeg = await new Promise((fertig) => flaeche.toBlob(fertig, "image/jpeg", guete));
+      if (!jpeg?.size || jpeg.type !== "image/jpeg")
+        throw new Error("Das Bild lässt sich hier nicht in JPG umwandeln.");
+      if (jpeg.size <= groessterAnhang) break;
+    }
+    return jpeg;
+  } finally {
+    bild.close?.();
+  }
+}
+
+async function anhang(blob, name) {
+  if (blob.size > groessterAnhang) throw new Error("höchstens 3 MB.");
+  return { name, typ: blob.type, daten: btoa(binaertext(new Uint8Array(await blob.arrayBuffer()))) };
+}
+
+function textPruefen(text) {
+  if (!text.trim()) throw new Error("Die Datei enthält keinen Text.");
+  if (text.includes("\0")) throw new Error("Die Datei enthält keinen lesbaren Text.");
+  return text.trim();
+}
+
+const alsJpgName = (name) => name.replace(/\.[^./\\]*$/u, "") + ".jpg";
+const hoechstens = (zahl) => "Höchstens " + zahl + (zahl === 1 ? " Datei." : " Dateien.");
+
+/**
+ * Liest eine Datei und entscheidet: Text, Anhang, Hinweis oder doppelt. Das Ergebnis ändert nichts; die Ablage legt ab.
+ * kontext.frei(): ist noch ein Platz frei · kontext.vorhanden(anhang): steckt dieser Inhalt schon drin · kontext.hatText(text).
+ */
+async function lesen$1(datei, kontext) {
+  if (!datei.size) throw new Error("Die Datei ist leer.");
+  const endung = datei.name.toLowerCase().match(/\.[^.]+$/)?.[0];
+  if (bildArten.includes(endung) || (!endung && /^image\/(?:jpeg|png|webp|heic|heif)$/.test(datei.type))) {
+    // Die Höchstzahl gilt vor der Arbeit: Ein überzähliges Bild wird weder gelesen noch verkleinert.
+    if (!kontext.frei()) throw new Error(hoechstens(kontext.hoechstzahl));
+    const bild = await anhang(await alsJpeg(datei, endung), alsJpgName(datei.name));
+    if (kontext.vorhanden(bild)) return { doppelt: true };
+    return { anhang: bild };
+  }
+  if (endung === ".pdf" || (!endung && datei.type === "application/pdf")) {
+    if (datei.size > groessterAnhang) throw new Error("höchstens 3 MB.");
+    const bytes = new Uint8Array(await datei.arrayBuffer());
+    if (!binaertext(bytes.subarray(0, 8)).startsWith("%PDF-")) throw new Error("Das ist keine lesbare PDF.");
+    try {
+      const text = (await pdfText(bytes)).trim();
+      if (!text) return { hinweis: "Die PDF enthält keinen lesbaren Text." };
+      return kontext.hatText(text) ? { doppelt: true } : { text };
+    } catch {
+      return { hinweis: "Den PDF-Text kann der Browser hier nicht lesen." };
+    }
+  }
+  if (!textArten.includes(endung)) throw new Error("Dieses Format geht hier nicht.");
+  let text;
+  if (endung === ".docx") text = textPruefen(await wordtext(datei));
+  else {
+    if (datei.size > groessterText) throw new Error("Die Textdatei ist zu groß. Kopier einen Ausschnitt ins Feld.");
+    const bytes = new Uint8Array(await datei.arrayBuffer());
+    text = textPruefen(endung === ".eml" ? mailtext(bytes) : dateitext(bytes));
+  }
+  return kontext.hatText(text) ? { doppelt: true } : { text };
+}
+
+function mitFrist(versprechen) {
+  let uhr;
+  return Promise.race([
+    versprechen,
+    new Promise((_, nein) => {
+      uhr = setTimeout(() => nein(new Error("Die Datei lässt sich nicht rechtzeitig lesen.")), frist);
+    }),
+  ]).finally(() => clearTimeout(uhr));
+}
+
+const vorschau$1 = 96;
+const base64Bytes = (daten) => Uint8Array.from(atob(daten), (zeichen) => zeichen.charCodeAt(0));
+
+function dokumentSymbol(stift) {
+  stift.strokeStyle = stift.fillStyle = getComputedStyle(stift.canvas).color;
+  stift.lineWidth = 4;
+  stift.beginPath();
+  stift.moveTo(24, 10);
+  stift.lineTo(58, 10);
+  stift.lineTo(74, 26);
+  stift.lineTo(74, 86);
+  stift.lineTo(24, 86);
+  stift.closePath();
+  stift.moveTo(58, 10);
+  stift.lineTo(58, 26);
+  stift.lineTo(74, 26);
+  stift.stroke();
+  for (const y of [40, 52, 64, 76]) stift.fillRect(34, y, 30, 3);
+}
+
+async function vorschauZeichnen(flaeche, datei) {
+  // Erst nach dem Einhängen: die Farbe des Feldes im Dokument (hell oder dunkel).
+  await Promise.resolve();
+  const stift = flaeche.getContext("2d");
+  if (!stift) return;
+  if (datei.typ.startsWith("image/")) {
+    try {
+      const bild = await createImageBitmap(new Blob([base64Bytes(datei.daten)], { type: datei.typ }));
+      const faktor = Math.max(vorschau$1 / bild.width, vorschau$1 / bild.height);
+      stift.drawImage(
+        bild,
+        (vorschau$1 - bild.width * faktor) / 2,
+        (vorschau$1 - bild.height * faktor) / 2,
+        bild.width * faktor,
+        bild.height * faktor,
+      );
+      bild.close?.();
+      return;
+    } catch {
+      // Ein Bild, das sich nicht zeichnen lässt, zeigt das Dokument-Symbol; der Anhang selbst bleibt gültig.
+    }
+  }
+  dokumentSymbol(stift);
+}
+
+function groessenText(daten) {
+  const bytes = Math.floor((daten.length * 3) / 4) - (daten.endsWith("==") ? 2 : daten.endsWith("=") ? 1 : 0);
+  return bytes < 1024 * 1024
+    ? Math.max(1, Math.round(bytes / 1024)) + " kB"
+    : (bytes / 1024 / 1024).toFixed(1).replace(".", ",") + " MB";
+}
+
+/**
+ * Eine Zeile der Anhangsliste: Vorschau (Bild oder Dokument-Symbol), Name, Größe und ×-Knopf «<Name> entfernen».
+ * beiEntfernen() nimmt den Anhang aus dem Stand der Seite; danach liegt der Fokus auf dem nächsten ×, sonst dem davor, sonst
+ * auf «Datei wählen». Auch zurückgeholte Bilder erhalten dieselbe Karte.
+ */
+function anhangKarte(datei, beiEntfernen) {
+  const karte = element$1("div");
+  karte.className = "ablage-karte";
+  const flaeche = element$1("canvas");
+  flaeche.className = "ablage-vorschau";
+  flaeche.width = flaeche.height = vorschau$1;
+  flaeche.setAttribute("aria-hidden", "true");
+  const angabe = element$1("span");
+  angabe.className = "ablage-angabe";
+  const name = element$1("span", datei.name);
+  name.className = "ablage-name";
+  const groesse = element$1("small", groessenText(datei.daten));
+  groesse.className = "ablage-groesse";
+  angabe.append(name, groesse);
+  const weg = element$1("button", "×");
+  weg.type = "button";
+  weg.className = "ablage-weg";
+  weg.setAttribute("aria-label", datei.name + " entfernen");
+  weg.addEventListener("click", () => {
+    const bereich = karte.closest(".werkzeug-ablage");
+    const stelle = Array.from(bereich?.querySelectorAll(".ablage-weg") ?? []).indexOf(weg);
+    beiEntfernen();
+    karte.remove();
+    const rest = Array.from(bereich?.querySelectorAll(".ablage-weg") ?? []);
+    (rest[stelle] ?? rest.at(-1) ?? bereich?.querySelector(".ablage-wahl"))?.focus();
+  });
+  karte.append(flaeche, angabe, weg);
+  void vorschauZeichnen(flaeche, datei);
+  return karte;
+}
+
+let ablagen = 0;
+function element$1(tag, inhalt) {
+  const el = document.createElement(tag);
+  if (inhalt) el.textContent = inhalt;
+  return el;
+}
+
+/** Bindet an die bestehende Textarea. Die Werkzeugseite fragt vor jeder Auswertung bereit() und dann dateien() ab. */
+function ablegen({ bereich, textfeld, eingabe, vorhanden = () => [] }) {
+  // Die Zahl der Seite für die Meldung; eingabe.max_dateien sinkt, wenn die Seite zurückgeholte Anhänge selbst hält.
+  const hoechstzahl = eingabe.max_dateien;
+  // Der Knopf ist die Beschriftung des versteckten Feldes (Seiten ändern ihren Text über input.labels[0]); mit Tastatur
+  // und Vorlesegerät wie ein Knopf bedienbar (role, tabindex, Enter und Leertaste).
+  const knopf = element$1("label");
+  knopf.className = "ablage-wahl";
+  knopf.setAttribute("role", "button");
+  knopf.tabIndex = 0;
+  const wahl = element$1("input");
+  wahl.type = "file";
+  wahl.hidden = true;
+  wahl.multiple = true;
+  wahl.accept = [...textArten, ".pdf", ...bildArten].join(",");
+  // Ein Aufruf wie wahl.focus() (etwa nach «Entfernen») landet beim sichtbaren Knopf.
+  wahl.focus = (optionen) => knopf.focus(optionen);
+  knopf.addEventListener("keydown", (ereignis) => {
+    if (ereignis.key !== "Enter" && ereignis.key !== " ") return;
+    ereignis.preventDefault();
+    wahl.click();
+  });
+  const anleitung = element$1("p");
+  anleitung.className = "ablage-hinweis";
+  anleitung.id = "ablage-hinweis-" + ++ablagen;
+  knopf.setAttribute("aria-describedby", anleitung.id);
+  const tastatur = element$1("span", "Hier ablegen oder mit Strg+V oder ⌘V einfügen.");
+  tastatur.className = "ablage-tastatur";
+  const tippen = element$1("span", "Nimmt Textdateien, PDF und Fotos an.");
+  tippen.className = "ablage-tippen";
+  anleitung.append(tastatur, tippen);
+  const stand = element$1("div");
+  stand.setAttribute("role", "status");
+  // Abgelehnte Dateien des letzten Stapels: je Zeile Name und Grund, höchstens drei, danach «und N weitere».
+  const meldungen = element$1("div");
+  meldungen.setAttribute("role", "status");
+  const karten = element$1("div");
+  bereich.append(knopf, anleitung, stand, meldungen, karten);
+  bereich.classList.add("werkzeug-ablage");
+  bereich.tabIndex = 0;
+  const anhaenge = new Set();
+  let generation = 0;
+  let schlange = Promise.resolve();
+  // Texte, die aus Dateien ins Feld kamen: Nur ein solcher Text, der noch ganz im Feld steht, macht eine Datei zur Dublette.
+  let eingefuegt = [];
+  let laufend = 0;
+
+  function karte(datei) {
+    anhaenge.add(datei);
+    karten.append(
+      anhangKarte(datei, () => {
+        anhaenge.delete(datei);
+        meldungen.replaceChildren();
+      }),
+    );
+  }
+  function meldungenZeigen(zeilen) {
+    meldungen.replaceChildren(
+      ...zeilen.slice(0, 3).map((zeile) => element$1("p", zeile)),
+      ...(zeilen.length > 3 ? [element$1("p", "und " + (zeilen.length - 3) + " weitere")] : []),
+    );
+  }
+  function einfuegen(text) {
+    textfeld.value += (textfeld.value ? "\n\n" : "") + text;
+    textfeld.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+  function abarbeiten(dateien) {
+    const start = generation;
+    const kontext = {
+      hoechstzahl,
+      frei: () => anhaenge.size < eingabe.max_dateien,
+      vorhanden: (neu) => [...anhaenge, ...vorhanden()].some((datei) => datei.daten === neu.daten),
+      hatText: (text) => eingefuegt.includes(text) && textfeld.value.includes(text),
+    };
+    laufend++;
+    bereich.setAttribute("aria-busy", "true");
+    schlange = schlange.then(async () => {
+      const zeilen = [];
+      try {
+        for (const datei of dateien) {
+          if (start !== generation) return;
+          try {
+            const gelesen = await mitFrist(lesen$1(datei, kontext));
+            if (start !== generation) return;
+            if (gelesen.doppelt) zeilen.push(datei.name + " ist schon dabei.");
+            if (gelesen.text) {
+              const zahl = gelesen.text.match(/\S+/gu)?.length ?? 0;
+              stand.append(element$1("p", datei.name + " · " + zahl + (zahl === 1 ? " Wort" : " Wörter")));
+              einfuegen(gelesen.text);
+              eingefuegt.push(gelesen.text);
+            }
+            if (gelesen.anhang) karte(gelesen.anhang);
+            if (gelesen.hinweis) zeilen.push(datei.name + ": " + gelesen.hinweis);
+          } catch (fehler) {
+            if (start !== generation) return;
+            const grund = fehler.constructor === Error ? fehler.message : "Die Datei lässt sich hier nicht lesen.";
+            zeilen.push(datei.name + ": " + grund);
+          }
+        }
+        meldungenZeigen(zeilen);
+      } catch {
+        // Nichts darf die Schlange anhalten: Auch ein unerwarteter Fehler lässt die nächste Auswahl zu.
+        if (start === generation)
+          meldungenZeigen([...zeilen, "Das Hochladen hat nicht geklappt. Versuch es noch einmal."]);
+      } finally {
+        // «beschäftigt», solange die Ablage liest: ruhig heißt, das Attribut fehlt (Seiten und Tests warten darauf).
+        if (--laufend === 0) bereich.removeAttribute("aria-busy");
+      }
+    });
+  }
+  function aufnehmen(ereignis) {
+    if (ereignis.defaultPrevented) return;
+    const transfer = ereignis.clipboardData ?? ereignis.dataTransfer;
+    const dateien = Array.from(transfer?.files ?? []);
+    if (!dateien.length && transfer?.items) {
+      for (const teil of transfer.items) {
+        const datei = teil.kind === "file" && teil.getAsFile();
+        if (datei) dateien.push(datei);
+      }
+    }
+    if (dateien.length) {
+      ereignis.preventDefault();
+      abarbeiten(dateien);
+    } else if (ereignis.target !== textfeld) {
+      const text = transfer?.getData("text/plain");
+      if (text) {
+        ereignis.preventDefault();
+        einfuegen(text);
+        textfeld.focus();
+      }
+    }
+  }
+
+  knopf.append("Datei wählen", wahl);
+  wahl.addEventListener("change", () => {
+    abarbeiten(Array.from(wahl.files));
+    wahl.value = "";
+  });
+  for (const ort of [bereich, textfeld]) {
+    ort.addEventListener("dragover", (ereignis) => ereignis.preventDefault());
+    ort.addEventListener("drop", aufnehmen);
+    ort.addEventListener("paste", aufnehmen);
+  }
+  return {
+    async bereit() {
+      let lauf;
+      do {
+        lauf = schlange;
+        await lauf;
+      } while (lauf !== schlange);
+    },
+    dateien: () => Array.from(anhaenge, (datei) => ({ ...datei })),
+    leeren() {
+      generation++;
+      schlange = Promise.resolve();
+      eingefuegt = [];
+      anhaenge.clear();
+      karten.replaceChildren();
+      stand.replaceChildren();
+      meldungen.replaceChildren();
+    },
+  };
+}
+
+// Der bestehende Sitzungsschlüssel erhält eigene Notizen und Markierungen nach dem Neuladen.
+const entwurfschluessel = "werkstatt.entwurf.werkzeug.safe-zones";
+const tabSchluessel = "werkstatt.entwurf.tab";
+const groesse = 1_000_000;
+
+const verboteneFelder = new Set([
+  "__proto__",
+  "prototype",
+  "constructor",
+  "dateien",
+  "anhaenge",
+  "files",
+  "attachments",
+  "base64",
+  "ki",
+  "rest",
+  "kontingent",
+  "zugang",
+  "token",
+  "cookies",
+  "preisplan",
+  "serverkosten",
+  "pass",
+]);
+
+function jsonDaten(wert, tiefe = 0) {
+  if (tiefe > 20) throw new Error("Zu tief verschachtelt.");
+  if (wert === null || typeof wert === "boolean") return wert;
+  if (typeof wert === "number" && Number.isFinite(wert)) return wert;
+  if (typeof wert === "string" && wert.length <= groesse && !/^(?:blob:|data:[^,]*;base64,)/iu.test(wert)) return wert;
+  if (Array.isArray(wert) && wert.length <= 10_000) return wert.map((v) => jsonDaten(v, tiefe + 1));
+  if (wert && Object.getPrototypeOf(wert) === Object.prototype) {
+    const paare = Object.entries(wert);
+    if (paare.length > 10_000 || paare.some(([k]) => verboteneFelder.has(k.toLowerCase())))
+      throw new Error("Keine Anhänge oder Serverwerte speichern.");
+    return Object.fromEntries(paare.map(([k, v]) => [k, jsonDaten(v, tiefe + 1)]));
+  }
+  throw new Error("Nur einfache Eingaben und Anzeigen speichern.");
+}
+
+function leeren() {
+  try {
+    sessionStorage.removeItem(entwurfschluessel);
+  } catch {
+    // Bei gesperrtem Sitzungsspeicher bleibt die Seite bedienbar.
+  }
+}
+function hatEintrag() {
+  try {
+    return sessionStorage.getItem(entwurfschluessel) !== null;
+  } catch {
+    return false;
+  }
+}
+function lesen() {
+  try {
+    const roh = sessionStorage.getItem(entwurfschluessel);
+    if (roh === null) return null;
+    if (roh.length > groesse) throw new Error("Zu groß.");
+    const stand = JSON.parse(roh);
+    if (
+      stand?.version !== 1 ||
+      stand.kennung !== "safe-zones" ||
+      stand.bereich !== "werkzeug" ||
+      typeof stand.dateiNeu !== "boolean" ||
+      Object.keys(stand).sort().join() !== "bereich,dateiNeu,daten,kennung,version"
+    )
+      throw new Error("Unbekannter Entwurf.");
+    return { daten: jsonDaten(stand.daten), dateiNeu: stand.dateiNeu };
+  } catch {
+    leeren();
+    return null;
+  }
+}
+function merken(daten, dateiNeu) {
+  try {
+    const text = JSON.stringify({
+      version: 1,
+      bereich: "werkzeug",
+      kennung: "safe-zones",
+      daten: jsonDaten(daten),
+      dateiNeu,
+    });
+    if (text.length > groesse) throw new Error("Zu groß.");
+    sessionStorage.setItem(entwurfschluessel, text);
+    return true;
+  } catch {
+    leeren();
+    return false;
+  }
+}
+const speicher = { hatEintrag, lesen, merken, leeren };
+function tabHost() {
+  try {
+    if (window.top.document) return window.top;
+  } catch {
+    /* Fremde Herkunft bleibt getrennt. */
+  }
+  return window;
+}
+
+// sessionStorage wird bei window.open unter Umständen kopiert. Ein noch offener Tab meldet dieselbe Kennung zurück.
+function tabPruefen() {
+  const host = tabHost();
+  const name = "__werkstattEntwurfTab";
+  const vorher = host[name];
+  if (vorher) {
+    try {
+      // Ein erfülltes Promise genügt nicht: Auch der Kanal braucht noch einen lebenden Besitzer.
+      if (!vorher.fenster.closed && vorher.fenster.document === vorher.dokument) return vorher.bereit;
+    } catch {
+      /* Ein inzwischen fremdes oder entferntes iframe besitzt keinen nutzbaren Koordinator mehr. */
+    }
+    vorher.schliessen();
+  }
+  const lauf = { fenster: window, dokument: document };
+  host[name] = lauf;
+  lauf.bereit = new Promise((fertig) => {
+    let kanal, timer;
+    lauf.schliessen = () => {
+      host.clearTimeout(timer);
+      kanal?.close();
+      host.removeEventListener("pagehide", lauf.schliessen);
+      if (window !== host) window.removeEventListener("pagehide", lauf.schliessen);
+      if (host[name] === lauf) delete host[name];
+      fertig();
+    };
+    try {
+      const ort = host.sessionStorage;
+      let id = ort.getItem(tabSchluessel);
+      if (!/^[a-f0-9-]{36}$/u.test(id ?? "")) id = host.crypto.randomUUID();
+      const frage = host.crypto.randomUUID();
+      let doppelt = false;
+      if (typeof host.BroadcastChannel === "function") {
+        kanal = new host.BroadcastChannel("werkstatt.entwuerfe.tab");
+        kanal.onmessage = ({ data }) => {
+          if (!data || data.tab !== id) return;
+          if (data.art === "frage" && data.frage !== frage)
+            kanal.postMessage({ art: "belegt", tab: id, frage: data.frage });
+          if (data.art === "belegt" && data.frage === frage) doppelt = true;
+        };
+        kanal.postMessage({ art: "frage", tab: id, frage });
+      } else if (host.opener && host.performance.getEntriesByType("navigation")[0]?.type === "navigate") {
+        doppelt = true;
+      }
+      timer = host.setTimeout(
+        () => {
+          try {
+            if (doppelt) {
+              speicher.leeren();
+              id = host.crypto.randomUUID();
+            }
+            ort.setItem(tabSchluessel, id);
+          } catch {
+            /* Ohne Sitzungsspeicher bleibt das Werkzeug benutzbar. */
+          }
+          fertig();
+        },
+        kanal ? 120 : 0,
+      );
+    } catch {
+      fertig();
+    }
+    host.addEventListener("pagehide", lauf.schliessen, { once: true });
+    // Host-Timer mit Callback aus einem entfernten Dokument können ebenfalls ausfallen.
+    // Deshalb endet der Lauf mit seinem Besitzer; das nächste Werkzeug beginnt eine eigene Prüfung.
+    if (window !== host) window.addEventListener("pagehide", lauf.schliessen, { once: true });
+  });
+  return lauf.bereit;
+}
+
+function element(tag, text, klasse) {
+  const el = document.createElement(tag);
+  if (text) el.textContent = text;
+  if (klasse) el.className = klasse;
+  if (tag === "button") el.type = "button";
+  return el;
+}
+
+/** Adapter lesen/zeigen nur ihren eigenen Stand. Gemerkt wird von selbst; es gibt nichts zu bestätigen. */
+function entwurfEinrichten({ anker, lesen, wiederherstellen, hatDateien = () => false }) {
+  const bereich = element("div", "", "werkzeug-entwurf");
+  const neu = element("button", "Leeren", "entwurf-link");
+  neu.setAttribute("aria-label", "Eingaben und Ergebnis dieses Werkzeugs leeren");
+  const dateiHinweis = element("p", "Datei neu wählen", "entwurf-datei");
+  const meldung = element("p", "", "entwurf-status");
+  meldung.setAttribute("role", "status");
+  bereich.append(neu, dateiHinweis, meldung);
+  anker.after(bereich);
+  let gestartet = false;
+  let bearbeitet = false;
+  let dateiGesehen = false;
+  // L1, 23.11.2026: «Datei neu wählen» steht nur, solange der wiederhergestellte Entwurf Dateien hatte und seither
+  // keine neue gewählt wurde.
+  let dateiErinnerung = false;
+  let timer;
+  let geloescht = false;
+  let eigenerStand = null;
+  let restauriert = false;
+  let ausgang = null;
+  let aktuell = null;
+  let demo = false;
+  let beispielGeklickt = false;
+  const frueheFelder = new Map();
+  const frueheAktionen = [];
+  try {
+    const leer = lesen();
+    ausgang = aktuell = leer === null ? null : JSON.stringify(jsonDaten(leer));
+  } catch {
+    /* Ohne Ausgangsstand gilt jeder Stand als «etwas da». */
+  }
+
+  // «Etwas da»: eine Datei, die neu gewählt werden muss, ein Beispiel im Feld oder ein Stand, der vom leeren Anfang abweicht.
+  function etwasDa() {
+    return dateiGesehen || hatDateien() || demo || beispielGeklickt || (aktuell !== null && aktuell !== ausgang);
+  }
+  // Liest den Stand nur zum Anzeigen; gespeichert wird hier nichts.
+  function anzeigeNeu() {
+    try {
+      const daten = lesen();
+      demo = daten === null;
+      if (!demo) aktuell = JSON.stringify(jsonDaten(daten));
+    } catch {
+      /* Der Knopf bleibt, wie er ist. */
+    }
+    zeigen();
+  }
+  function zeigen() {
+    neu.hidden = !etwasDa();
+    dateiHinweis.hidden = !dateiErinnerung;
+    bereich.hidden = neu.hidden && dateiHinweis.hidden && !meldung.textContent;
+  }
+  function merken() {
+    if (!gestartet || geloescht) return;
+    clearTimeout(timer);
+    try {
+      const daten = lesen();
+      // Rein flüchtig: Auch während einer Demo bleibt der eigene Stand davor erhalten.
+      demo = daten === null;
+      if (!demo) {
+        eigenerStand = { daten: jsonDaten(daten), dateiNeu: dateiGesehen || hatDateien() };
+        aktuell = JSON.stringify(eigenerStand.daten);
+      }
+      if (eigenerStand) {
+        if (JSON.stringify(eigenerStand.daten) === ausgang && !eigenerStand.dateiNeu) {
+          speicher.leeren();
+          meldung.textContent = "";
+        } else if (!speicher.merken(eigenerStand.daten, eigenerStand.dateiNeu))
+          meldung.textContent =
+            "Der Browser konnte den Entwurf nicht behalten. Kopier wichtige Texte vor dem Neuladen.";
+        else meldung.textContent = "";
+      }
+    } catch {
+      eigenerStand = null;
+      speicher.leeren();
+      meldung.textContent = "Der Browser konnte den Entwurf nicht behalten. Kopier wichtige Texte vor dem Neuladen.";
+    }
+    zeigen();
+  }
+  function eingabe(ereignis) {
+    if (restauriert || bereich.contains(ereignis.target)) return;
+    if (ereignis.type === "pointerup" && ereignis.target?.tagName !== "CANVAS") return;
+    const dateien = ereignis.target?.files ?? ereignis.clipboardData?.files ?? ereignis.dataTransfer?.files;
+    if (dateien?.length) {
+      dateiGesehen = true;
+      dateiErinnerung = false;
+    }
+    if (ereignis.type === "drop" || ereignis.type === "paste") {
+      if (!dateien?.length) return;
+    }
+    bearbeitet = true;
+    const ziel = ereignis.target;
+    if (!gestartet && ziel.matches?.("textarea, select, input:not([type=file])"))
+      frueheFelder.set(ziel, { wert: ziel.value, checked: ziel.checked, art: ereignis.type });
+    geloescht = false;
+    clearTimeout(timer);
+    timer = setTimeout(merken, 80);
+  }
+  function leeren() {
+    clearTimeout(timer);
+    geloescht = true;
+    eigenerStand = null;
+    dateiGesehen = false;
+    dateiErinnerung = false;
+    demo = false;
+    beispielGeklickt = false;
+    aktuell = ausgang;
+    speicher.leeren();
+    zeigen();
+  }
+  neu.addEventListener("click", () => {
+    leeren();
+    window.location.reload();
+  });
+  function frueheAktion(ereignis) {
+    if (gestartet || bereich.contains(ereignis.target)) return;
+    const ziel = ereignis.type === "submit" ? ereignis.target : ereignis.target.closest?.("button");
+    if (!ziel) return;
+    ereignis.preventDefault();
+    ereignis.stopImmediatePropagation();
+    if (frueheAktionen.length < 20)
+      frueheAktionen.push(() => {
+        if (!ziel.isConnected) return;
+        if (ereignis.type === "submit") ziel.requestSubmit(ereignis.submitter ?? undefined);
+        else ziel.click();
+      });
+  }
+  document.addEventListener("click", frueheAktion, { capture: true });
+  document.addEventListener("submit", frueheAktion, { capture: true });
+  for (const art of ["input", "change", "drop", "paste", "pointerup"])
+    document.addEventListener(art, eingabe, { capture: true });
+  // Ein Klick (Beispiel laden, Auswerten, Zurück) kann Feld oder Ergebnis ändern: kurz danach neu anzeigen.
+  let anzeigeTimer;
+  document.addEventListener(
+    "click",
+    (ereignis) => {
+      // «Beispiel laden» (#beispiel, wie in allen Werkzeugen): Das Beispiel steht im Feld, auch wenn die Seite ihren
+      // eigenen Stand davor meldet. Der Knopf bleibt, bis geleert wird.
+      if (ereignis.target?.closest?.("#beispiel")) beispielGeklickt = true;
+      clearTimeout(anzeigeTimer);
+      anzeigeTimer = setTimeout(() => gestartet && anzeigeNeu(), 120);
+    },
+    { capture: true },
+  );
+  window.addEventListener("pagehide", merken);
+  zeigen();
+  const bereit = (async () => {
+    // Nur wenn schon etwas gemerkt ist, muss die Tab-Prüfung vor dem Lesen fertig sein (kopierter Tab).
+    const tab = tabPruefen();
+    if (speicher.hatEintrag()) await tab;
+    const stand = speicher.lesen();
+    if (stand && (!bearbeitet || frueheFelder.size)) {
+      try {
+        restauriert = true;
+        wiederherstellen(stand.daten, { dateiNeu: stand.dateiNeu });
+        eigenerStand = stand;
+        aktuell = JSON.stringify(stand.daten);
+        dateiGesehen = stand.dateiNeu;
+        dateiErinnerung = stand.dateiNeu;
+      } catch {
+        speicher.leeren();
+        meldung.textContent = "Der gespeicherte Entwurf ließ sich nicht öffnen. Du kannst neu beginnen.";
+      } finally {
+        restauriert = false;
+      }
+    }
+    gestartet = true;
+    for (const [vorher, alt] of frueheFelder) {
+      // Ein vorheriger Feldwechsel kann abhängige Eingaben neu aufgebaut haben.
+      const ziel = vorher.id
+        ? document.getElementById(vorher.id)
+        : vorher.isConnected
+          ? vorher
+          : [...document.getElementsByName(vorher.name)].find((el) => el.form?.id === vorher.form?.id);
+      if (!ziel?.matches("textarea, select, input:not([type=file])")) continue;
+      ziel.value = alt.wert;
+      if (typeof alt.checked === "boolean") ziel.checked = alt.checked;
+      ziel.dispatchEvent(new Event(alt.art === "change" ? "change" : "input", { bubbles: true }));
+    }
+    frueheFelder.clear();
+    for (const aktion of frueheAktionen) aktion();
+    frueheAktionen.length = 0;
+    zeigen();
+    if (bearbeitet) merken();
+  })();
+  return { merken, leeren, bereit };
+}
+
+// UX1 R2, 17.11.2026: Angenommene Quellen verwalten; fehlgeschlagener Ersatz erhält den bisherigen Stand.
+
+const feld = (id) => document.getElementById(id);
+const eichung = JSON.parse(feld("eichung").textContent);
+const plattformen = plattformen$1(eichung);
+const vorschau = feld("vorschau");
+const pinsel = vorschau.getContext("2d");
+const breite = vorschau.width;
+const hoehe = vorschau.height;
+
+function leinwand() {
+  const flaeche = document.createElement("canvas");
+  flaeche.width = breite;
+  flaeche.height = hoehe;
+  return flaeche;
+}
+
+const bild = leinwand();
+const maske = leinwand();
+let plattform = plattformen[0];
+let markierung = null;
+let ersteEcke = null;
+let zeiger = null;
+let hatBild = false;
+let ablageBild = null;
+let bildLauf = 0;
+let exportLauf = 0;
+let vorBeispiel = null;
+let entwurf = null;
+let dateiFehlt = false;
+
+function fokussieren(ziel) {
+  ziel.focus({ preventScroll: true });
+  ziel.scrollIntoView({ block: "start" });
+}
+
+function exportLeeren() {
+  exportLauf++;
+  feld("exportstatus").textContent = "";
+}
+
+function maskeZeichnen() {
+  const stift = maske.getContext("2d");
+  stift.clearRect(0, 0, breite, hoehe);
+  stift.save();
+  stift.beginPath();
+  for (const zone of plattform.zonen) {
+    stift.rect(zone.x * breite, zone.y * hoehe, zone.breite * breite, zone.hoehe * hoehe);
+  }
+  stift.clip();
+  stift.fillStyle = "rgba(109, 29, 5, 0.34)";
+  stift.fillRect(0, 0, breite, hoehe);
+  stift.strokeStyle = "rgba(255, 203, 128, .84)";
+  stift.lineWidth = 4;
+  stift.beginPath();
+  for (let x = -hoehe; x < breite; x += 36) {
+    stift.moveTo(x, 0);
+    stift.lineTo(x + hoehe, hoehe);
+  }
+  stift.stroke();
+  stift.restore();
+  feld("stand").textContent = "Ungefähre Bereiche · Stand " + plattform.stand.split("-").reverse().join(".");
+}
+
+function zeichnen(auswahl = markierung) {
+  pinsel.clearRect(0, 0, breite, hoehe);
+  if (hatBild) {
+    pinsel.drawImage(bild, 0, 0);
+  } else {
+    pinsel.fillStyle = "#e3ded0";
+    pinsel.fillRect(0, 0, breite, hoehe);
+    pinsel.fillStyle = "#524c41";
+    pinsel.textAlign = "center";
+    pinsel.font = "54px sans-serif";
+    pinsel.fillText("9:16-Vorschau", breite / 2, hoehe / 2);
+  }
+  pinsel.drawImage(maske, 0, 0);
+  if (auswahl) {
+    const masse = [auswahl.x * breite, auswahl.y * hoehe, auswahl.breite * breite, auswahl.hoehe * hoehe];
+    pinsel.strokeStyle = "#161711";
+    pinsel.lineWidth = 12;
+    pinsel.strokeRect(...masse);
+    pinsel.strokeStyle = "#fff";
+    pinsel.lineWidth = 5;
+    pinsel.strokeRect(...masse);
+  } else if (ersteEcke) {
+    pinsel.beginPath();
+    pinsel.arc(ersteEcke.x * breite, ersteEcke.y * hoehe, 14, 0, 2 * Math.PI);
+    pinsel.fillStyle = "#fff";
+    pinsel.fill();
+    pinsel.strokeStyle = "#161711";
+    pinsel.lineWidth = 5;
+    pinsel.stroke();
+  }
+}
+
+function rueckmeldung() {
+  const befunde = markierung ? treffer(plattform.kennung, markierung, eichung) : [];
+  const meldung = feld("warnung");
+  meldung.classList.toggle("treffer", befunde.length > 0);
+  if (ersteEcke) meldung.textContent = "Erste Ecke gesetzt. Tippe auf die gegenüberliegende Ecke.";
+  else if (!markierung) meldung.textContent = "Noch kein Bereich markiert.";
+  else if (befunde.length)
+    meldung.textContent =
+      "Kann auf " + plattform.name + " verdeckt sein: " + befunde.map((zone) => zone.name).join(", ") + ".";
+  else meldung.textContent = "Deine Markierung liegt außerhalb der geschätzten Abdeckung von " + plattform.name + ".";
+  feld("loeschen").hidden = !markierung && !ersteEcke;
+}
+
+function markieren(neu, fokus = false) {
+  markierung = neu;
+  ersteEcke = null;
+  zeiger = null;
+  if (neu) {
+    const werte = { links: neu.x, oben: neu.y, breite: neu.breite, hoehe: neu.hoehe };
+    for (const [name, wert] of Object.entries(werte)) feld(name).value = Number((wert * 100).toFixed(4));
+  }
+  feld("massfehler").textContent = "";
+  zeichnen();
+  rueckmeldung();
+  if (fokus) fokussieren(vorschau);
+  entwurf?.merken();
+}
+
+function uebernehmeBild(quelle, bildBreite, bildHoehe) {
+  const rahmen = ausschnitt(bildBreite, bildHoehe);
+  const stift = bild.getContext("2d");
+  stift.clearRect(0, 0, breite, hoehe);
+  stift.drawImage(quelle, rahmen.x, rahmen.y, rahmen.breite, rahmen.hoehe, 0, 0, breite, hoehe);
+  hatBild = true;
+  dateiFehlt = false;
+  markieren(null);
+}
+
+function beispielbild() {
+  const daten = JSON.parse(JSON.parse(feld("beispieldaten").textContent)["teepackung.json"]);
+  const karte = leinwand();
+  const stift = karte.getContext("2d");
+  stift.fillStyle = daten.hintergrund;
+  stift.fillRect(0, 0, breite, hoehe);
+  stift.fillStyle = daten.tisch;
+  stift.fillRect(0, 1300, breite, hoehe - 1300);
+  stift.fillStyle = "#9e6045";
+  stift.beginPath();
+  stift.ellipse(625, 1405, 370, 48, 0, 0, 2 * Math.PI);
+  stift.fill();
+  // Faltkante, Seitenlasche und Etikett der erfundenen Teepackung.
+  stift.fillStyle = "#b97852";
+  const lasche = new Path2D("M745 633 L819 682 L819 1352 L745 1400 Z");
+  stift.fill(lasche);
+  stift.fillStyle = daten.packung;
+  stift.fillRect(265, 633, 480, 767);
+  stift.fillStyle = "#d99366";
+  stift.fillRect(265, 633, 480, 49);
+  stift.fillStyle = daten.tinte;
+  stift.textAlign = "center";
+  stift.font = "bold 32px sans-serif";
+  stift.fillText(daten.art, 505, 770);
+  stift.font = "bold 70px Georgia, serif";
+  stift.fillText(daten.name, 505, 885, 442);
+  const blaetter = new Path2D(
+    "M502 1175 Q483 1080 383 1052 Q383 1162 502 1175 M505 1143 Q525 1017 642 1000 Q623 1123 505 1143 M501 1111 Q422 1010 450 960 Q528 1007 501 1111",
+  );
+  stift.fill(blaetter);
+  stift.font = "37px Georgia, serif";
+  stift.fillText(daten.sorte, 505, 1285);
+  return karte;
+}
+
+for (const eintrag of plattformen) {
+  const label = document.createElement("label");
+  const radio = document.createElement("input");
+  radio.type = "radio";
+  radio.name = "plattform";
+  radio.value = eintrag.kennung;
+  radio.checked = eintrag === plattform;
+  radio.addEventListener("change", () => {
+    plattform = eintrag;
+    ersteEcke = null;
+    zeiger = null;
+    maskeZeichnen();
+    zeichnen();
+    rueckmeldung();
+    exportLeeren();
+    entwurf?.merken();
+  });
+  label.append(radio, eintrag.name);
+  feld("plattformen").append(label);
+}
+
+function position(ereignis) {
+  const rand = vorschau.getBoundingClientRect();
+  return { x: (ereignis.clientX - rand.left) / rand.width, y: (ereignis.clientY - rand.top) / rand.height };
+}
+
+vorschau.addEventListener("pointerdown", (ereignis) => {
+  if (!ereignis.isPrimary || ereignis.button !== 0) return;
+  zeiger = { id: ereignis.pointerId, start: position(ereignis), x: ereignis.clientX, y: ereignis.clientY };
+  vorschau.setPointerCapture(ereignis.pointerId);
+});
+
+function auswahlBis(ende) {
+  const start = ersteEcke ?? zeiger.start;
+  return rechteck(start.x, start.y, ende.x, ende.y);
+}
+
+vorschau.addEventListener("pointermove", (ereignis) => {
+  if (zeiger?.id === ereignis.pointerId) zeichnen(auswahlBis(position(ereignis)));
+});
+
+vorschau.addEventListener("pointerup", (ereignis) => {
+  if (zeiger?.id !== ereignis.pointerId) return;
+  const ende = position(ereignis);
+  if (ersteEcke || Math.hypot(ereignis.clientX - zeiger.x, ereignis.clientY - zeiger.y) > 5) {
+    const auswahl = auswahlBis(ende);
+    if (auswahl.breite > 0 && auswahl.hoehe > 0) markieren(auswahl);
+    else {
+      zeiger = null;
+      zeichnen();
+      rueckmeldung();
+    }
+  } else {
+    markierung = null;
+    ersteEcke = zeiger.start;
+    zeiger = null;
+    zeichnen();
+    rueckmeldung();
+    entwurf?.merken();
+  }
+});
+vorschau.addEventListener("pointercancel", () => {
+  zeiger = null;
+  zeichnen();
+});
+
+feld("masse").addEventListener("submit", (ereignis) => {
+  ereignis.preventDefault();
+  const [x, y, w, h] = ["links", "oben", "breite", "hoehe"].map((name) => feld(name).valueAsNumber / 100);
+  if (w <= 0 || h <= 0 || x + w > 1 + Number.EPSILON || y + h > 1 + Number.EPSILON) {
+    feld("massfehler").textContent =
+      "Breite und Höhe müssen größer als null sein. Das ganze Rechteck muss ins Bild passen.";
+    feld("massfehler").focus();
+    return;
+  }
+  markieren(rechteck(x, y, x + w, y + h), true);
+});
+feld("loeschen").addEventListener("click", () => markieren(null, true));
+feld("beispiel").addEventListener("click", () => {
+  if (!vorBeispiel) {
+    const eigenesBild = leinwand();
+    eigenesBild.getContext("2d").drawImage(bild, 0, 0);
+    vorBeispiel = {
+      bild: eigenesBild,
+      anhang: aktuellerBildanhang,
+      massfehler: feld("massfehler").textContent,
+      hatBild,
+      markierung,
+      ersteEcke,
+      plattform,
+      text: textfeld.value,
+      medienstatus: medienPruefung?.vorherStatus ?? feld("medienstatus").textContent,
+      masse: ["links", "oben", "breite", "hoehe"].map((id) => [id, feld(id).value]),
+      video: leseauftrag?.datei ?? null,
+      zeit: quellvideo.currentTime,
+      dateiFehlt,
+    };
+  }
+  exportLeeren();
+  eingabeLeeren();
+  eigeneEingabe.hidden = false;
+  textfeld.value = "Erfundenes Beispiel: Teepackung Gartenpause.";
+  uebernehmeBild(beispielbild(), breite, hoehe);
+  markieren(rechteck(265 / breite, 633 / hoehe, 819 / breite, 1400 / hoehe));
+  fokussieren(vorschau);
+  feld("medienstatus").textContent = "Erfundenes Beispiel geladen: Gartenpause.";
+});
+feld("png").addEventListener("click", () => {
+  const lauf = ++exportLauf;
+  const kennung = plattform.kennung;
+  feld("exportstatus").textContent = "PNG wird erstellt …";
+  maske.toBlob((datei) => {
+    if (lauf !== exportLauf) return;
+    if (!datei) {
+      feld("exportstatus").textContent = "Die PNG-Datei konnte nicht erstellt werden.";
+      return;
+    }
+    const adresse = URL.createObjectURL(datei);
+    const link = document.createElement("a");
+    link.href = adresse;
+    link.download = "safe-zone-" + kennung + ".png";
+    document.body.append(link);
+    link.click();
+    link.remove();
+    feld("exportstatus").textContent = "Download gestartet: safe-zone-" + kennung + ".png";
+    setTimeout(() => URL.revokeObjectURL(adresse), 1000);
+  }, "image/png");
+});
+
+maskeZeichnen();
+zeichnen();
+rueckmeldung();
+
+// W17: Bild oder Video aus der lokalen Datei lesen. Nur die aktuelle Auswahl darf die Vorschau ersetzen.
+const dateiauswahl = document.getElementById("datei");
+const videobereich = document.getElementById("videobereich");
+const quellvideo = document.getElementById("video");
+const standbildKnopf = document.getElementById("standbild");
+const medienstatus = document.getElementById("medienstatus");
+let leseauftrag = null;
+let medienPruefung = null;
+
+function pruefungBeenden() {
+  if (!medienPruefung) return;
+  const auftrag = medienPruefung;
+  medienPruefung = null;
+  auftrag.ende.abort();
+  if (auftrag.leser?.readyState === FileReader.LOADING) auftrag.leser.abort();
+  if (auftrag.probe instanceof HTMLVideoElement) {
+    auftrag.probe.removeAttribute("src");
+    auftrag.probe.load();
+  }
+  if (auftrag.adresse) URL.revokeObjectURL(auftrag.adresse);
+}
+
+function stoppeMedien() {
+  pruefungBeenden();
+  if (leseauftrag) {
+    leseauftrag.ende.abort();
+    quellvideo.pause();
+    if (quellvideo.hasAttribute("src")) {
+      quellvideo.removeAttribute("src");
+      quellvideo.load();
+    }
+    if (leseauftrag.adresse) URL.revokeObjectURL(leseauftrag.adresse);
+    leseauftrag = null;
+  }
+  dateiauswahl.value = "";
+  standbildKnopf.disabled = true;
+  videobereich.hidden = true;
+  medienstatus.textContent = "";
+}
+
+function ladeMedien(datei, zeit = null, wiederherstellen = false) {
+  pruefungBeenden();
+  const istVideo = datei.type.startsWith("video/") || /\.(mp4|mov|m4v|webm|ogv|mkv)$/iu.test(datei.name);
+  const istBild = datei.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|avif|bmp|heic)$/iu.test(datei.name);
+  const erhalten = () => (hatBild ? " Die bisherige Vorschau bleibt erhalten." : "");
+  if (!(istVideo || istBild) || !datei.size) {
+    medienstatus.textContent = "Wähle eine Bild- oder Videodatei mit Inhalt." + erhalten();
+    return;
+  }
+  const auftrag = {
+    datei,
+    leser: new FileReader(),
+    ende: new AbortController(),
+    adresse: "",
+    probe: null,
+    vorherStatus: medienstatus.textContent,
+  };
+  medienPruefung = auftrag;
+  const optionen = { signal: auftrag.ende.signal };
+  const fehler = (text) => {
+    if (medienPruefung !== auftrag) return;
+    pruefungBeenden();
+    medienstatus.textContent = text + erhalten();
+  };
+  medienstatus.textContent = "Lese „" + datei.name + "“ …";
+  auftrag.leser.addEventListener("error", () => fehler("Die Datei ließ sich nicht lesen. Wähle sie erneut."), optionen);
+  auftrag.leser.addEventListener(
+    "load",
+    () => {
+      if (medienPruefung !== auftrag) return;
+      auftrag.adresse = URL.createObjectURL(new Blob([auftrag.leser.result], { type: datei.type }));
+      auftrag.leser = null;
+      if (istVideo) {
+        // Erst ein tatsächlich abspielbares Video ersetzt die vorhandene Quelle.
+        const probe = document.createElement("video");
+        auftrag.probe = probe;
+        probe.muted = true;
+        probe.preload = "auto";
+        probe.addEventListener(
+          "error",
+          () => fehler("Dein Browser kann dieses Video nicht abspielen. Wähle ein anderes Format oder ein Standbild."),
+          optionen,
+        );
+        probe.addEventListener(
+          "loadeddata",
+          () => {
+            if (medienPruefung !== auftrag) return;
+            medienPruefung = null;
+            auftrag.ende.abort();
+            probe.removeAttribute("src");
+            probe.load();
+            if (!wiederherstellen) eigenesMedium();
+            else stoppeMedien();
+            const aktiv = { datei, adresse: auftrag.adresse, ende: new AbortController() };
+            leseauftrag = aktiv;
+            dateiFehlt = false;
+            const aktivOptionen = { signal: aktiv.ende.signal };
+            if (zeit !== null) {
+              quellvideo.addEventListener(
+                "loadedmetadata",
+                () => {
+                  quellvideo.currentTime = Math.min(
+                    zeit,
+                    Number.isFinite(quellvideo.duration) ? quellvideo.duration : zeit,
+                  );
+                },
+                { ...aktivOptionen, once: true },
+              );
+            }
+            const bereit = () => {
+              standbildKnopf.disabled =
+                quellvideo.seeking || quellvideo.readyState < HTMLMediaElement.HAVE_CURRENT_DATA;
+            };
+            for (const typ of ["loadeddata", "canplay", "seeking", "seeked", "timeupdate"])
+              quellvideo.addEventListener(typ, bereit, aktivOptionen);
+            quellvideo.addEventListener(
+              "error",
+              () => {
+                if (leseauftrag !== aktiv) return;
+                stoppeMedien();
+                medienstatus.textContent =
+                  "Dein Browser kann dieses Video nicht abspielen. Wähle ein anderes Format oder ein Standbild." +
+                  erhalten();
+              },
+              aktivOptionen,
+            );
+            videobereich.hidden = false;
+            medienstatus.textContent =
+              wiederherstellen && hatBild
+                ? auftrag.vorherStatus || "Dein Standbild ist wieder da. Du kannst im Video eine weitere Stelle wählen."
+                : "Suche im Video die gewünschte Stelle. Wähle dann „Standbild übernehmen“.";
+            quellvideo.preload = "auto";
+            quellvideo.src = aktiv.adresse;
+            entwurf?.merken();
+          },
+          { ...optionen, once: true },
+        );
+        probe.src = auftrag.adresse;
+      } else {
+        const quelle = new Image();
+        auftrag.probe = quelle;
+        quelle.addEventListener(
+          "error",
+          () => fehler("Dein Browser kann dieses Bild nicht anzeigen. Versuche es mit PNG oder JPG."),
+          optionen,
+        );
+        quelle.addEventListener(
+          "load",
+          () => {
+            if (medienPruefung !== auftrag) return;
+            medienPruefung = null;
+            auftrag.ende.abort();
+            eigenesMedium();
+            uebernehmeBild(quelle, quelle.naturalWidth, quelle.naturalHeight);
+            URL.revokeObjectURL(auftrag.adresse);
+            medienstatus.textContent = "Bild übernommen: " + datei.name;
+          },
+          { ...optionen, once: true },
+        );
+        quelle.src = auftrag.adresse;
+      }
+    },
+    optionen,
+  );
+  auftrag.leser.readAsArrayBuffer(datei);
+}
+
+dateiauswahl.addEventListener("change", () => {
+  const datei = dateiauswahl.files[0];
+  dateiauswahl.value = "";
+  if (datei) ladeMedien(datei);
+});
+
+standbildKnopf.addEventListener("click", () => {
+  if (standbildKnopf.disabled || quellvideo.seeking || !quellvideo.videoWidth) return;
+  pruefungBeenden();
+  quellvideo.pause();
+  basisAblage.leeren();
+  gespeichertesBild = null;
+  aktuellerBildanhang = null;
+  anhangZeigen();
+  ablageBild = null;
+  bildLauf++;
+  uebernehmeBild(quellvideo, quellvideo.videoWidth, quellvideo.videoHeight);
+  medienstatus.textContent = "Standbild übernommen. Du kannst im Video eine weitere Stelle wählen.";
+});
+
+// Bildablage und lokale Notiz werden zusammen mit dem gewählten Ausschnitt angezeigt.
+const textfeld = feld("material");
+const eingabe = { max_dateien: 1 };
+const basisAblage = ablegen({
+  bereich: feld("ablage"),
+  textfeld,
+  eingabe,
+  vorhanden: () => (gespeichertesBild ? [gespeichertesBild] : []),
+});
+let gespeichertesBild = null;
+let aktuellerBildanhang = null;
+const eigeneAblage = document.createElement("div");
+eigeneAblage.id = "eigene-bildablage";
+feld("ablage").append(eigeneAblage);
+function bildDateien() {
+  return [...(gespeichertesBild ? [gespeichertesBild] : []), ...basisAblage.dateien()];
+}
+function anhangZeigen() {
+  eigeneAblage.replaceChildren();
+  eingabe.max_dateien = gespeichertesBild ? 0 : 1;
+  if (!gespeichertesBild) return;
+  eigeneAblage.append(
+    anhangKarte(gespeichertesBild, () => {
+      gespeichertesBild = null;
+      aktuellerBildanhang = null;
+      anhangZeigen();
+      void bildAbgleichen();
+    }),
+  );
+}
+let synchron = Promise.resolve();
+async function synchronisieren(start) {
+  await basisAblage.bereit();
+  if (start !== bildLauf) return;
+  const anhang = bildDateien()[0] ?? null;
+  const schluessel = anhang ? anhang.daten : null;
+  if (schluessel === ablageBild) return;
+  const lauf = ++bildLauf;
+  if (!anhang) {
+    ablageBild = null;
+    aktuellerBildanhang = null;
+    hatBild = false;
+    dateiFehlt = false;
+    markieren(null);
+    feld("medienstatus").textContent = "Bild entfernt.";
+    return;
+  }
+  const quelle = new Image();
+  const bytes = Uint8Array.from(atob(anhang.daten), (zeichen) => zeichen.charCodeAt(0));
+  const adresse = URL.createObjectURL(new Blob([bytes], { type: anhang.typ }));
+  try {
+    quelle.src = adresse;
+    await quelle.decode();
+    if (lauf !== bildLauf || bildDateien()[0]?.daten !== schluessel) return;
+    if (vorBeispiel) {
+      // Der gemeinsame Rückweg leert die Basisablage. Den angenommenen Anhang deshalb vorher sichern.
+      beispielVerlassen();
+      basisAblage.leeren();
+      gespeichertesBild = anhang;
+      anhangZeigen();
+    }
+    stoppeMedien();
+    ablageBild = schluessel;
+    aktuellerBildanhang = anhang;
+    uebernehmeBild(quelle, quelle.naturalWidth, quelle.naturalHeight);
+    feld("medienstatus").textContent = "Bild übernommen: " + anhang.name;
+  } catch {
+    if (lauf !== bildLauf) return;
+    basisAblage.leeren();
+    feld("medienstatus").textContent =
+      "Das neue Bild ließ sich nicht anzeigen. Wähle PNG oder JPG." +
+      (hatBild ? " Die bisherige Vorschau bleibt erhalten." : "");
+  } finally {
+    URL.revokeObjectURL(adresse);
+  }
+}
+function bildAbgleichen() {
+  const start = bildLauf;
+  synchron = synchron.then(() => synchronisieren(start));
+  return synchron;
+}
+new MutationObserver(() => {
+  void bildAbgleichen();
+}).observe(feld("ablage"), { childList: true, subtree: true });
+function eingabeLeeren() {
+  bildLauf++;
+  synchron = Promise.resolve();
+  basisAblage.leeren();
+  gespeichertesBild = null;
+  aktuellerBildanhang = null;
+  anhangZeigen();
+  ablageBild = null;
+  hatBild = false;
+  stoppeMedien();
+  markieren(null);
+}
+const eigeneEingabe = feld("eigene-eingabe");
+eigeneEingabe.addEventListener("click", () => {
+  beispielVerlassen();
+  textfeld.focus();
+});
+
+function beispielVerlassen() {
+  exportLeeren();
+  const vorher = vorBeispiel;
+  vorBeispiel = null;
+  if (!vorher) return;
+  eigeneEingabe.hidden = true;
+  bild.getContext("2d").clearRect(0, 0, breite, hoehe);
+  bild.getContext("2d").drawImage(vorher.bild, 0, 0);
+  hatBild = vorher.hatBild;
+  dateiFehlt = vorher.dateiFehlt === true;
+  gespeichertesBild = vorher.anhang;
+  aktuellerBildanhang = vorher.anhang;
+  ablageBild = vorher.anhang?.daten ?? null;
+  anhangZeigen();
+  plattform = vorher.plattform;
+  for (const radio of feld("plattformen").querySelectorAll("input")) radio.checked = radio.value === plattform.kennung;
+  textfeld.value = vorher.text;
+  maskeZeichnen();
+  markieren(vorher.markierung);
+  ersteEcke = vorher.ersteEcke;
+  for (const [id, wert] of vorher.masse) feld(id).value = wert;
+  feld("massfehler").textContent = vorher.massfehler;
+  zeichnen();
+  rueckmeldung();
+  medienstatus.textContent = vorher.medienstatus;
+  if (vorher.video) ladeMedien(vorher.video, vorher.zeit, true);
+  entwurf?.merken();
+}
+
+function eigenesMedium() {
+  beispielVerlassen();
+  eingabeLeeren();
+}
+
+entwurf = entwurfEinrichten({
+  anker: textfeld,
+  lesen() {
+    const stand = vorBeispiel;
+    const bereich = stand ? stand.markierung : markierung;
+    const ecke = stand ? stand.ersteEcke : ersteEcke;
+    return {
+      art: "safe-zones",
+      plattform: (stand?.plattform ?? plattform).kennung,
+      text: stand ? stand.text : textfeld.value,
+      masse: Object.fromEntries(stand?.masse ?? ["links", "oben", "breite", "hoehe"].map((id) => [id, feld(id).value])),
+      markierung: bereich ? { x: bereich.x, y: bereich.y, breite: bereich.breite, hoehe: bereich.hoehe } : null,
+      ersteEcke: ecke ? { x: ecke.x, y: ecke.y } : null,
+    };
+  },
+  hatDateien: () =>
+    Boolean(
+      vorBeispiel
+        ? vorBeispiel.dateiFehlt || vorBeispiel.hatBild || vorBeispiel.video || vorBeispiel.anhang
+        : dateiFehlt || hatBild || leseauftrag || bildDateien().length,
+    ),
+  wiederherstellen(daten, { dateiNeu }) {
+    if (!daten || daten.art !== "safe-zones" || typeof daten.text !== "string" || daten.text.length > 1_000_000) return;
+    const gewaehlt = plattformen.find((eintrag) => eintrag.kennung === daten.plattform);
+    const namen = ["links", "oben", "breite", "hoehe"];
+    if (
+      !gewaehlt ||
+      !daten.masse ||
+      !namen.every((id) => typeof daten.masse[id] === "string" && daten.masse[id].length <= 1_000_000)
+    )
+      return;
+    const punkt = (wert) =>
+      wert && ["x", "y"].every((id) => Number.isFinite(wert[id]) && wert[id] >= 0 && wert[id] <= 1);
+    const bereich = daten.markierung;
+    if (
+      (daten.ersteEcke !== null && !punkt(daten.ersteEcke)) ||
+      (bereich !== null &&
+        (!punkt(bereich) ||
+          !["breite", "hoehe"].every((id) => Number.isFinite(bereich[id]) && bereich[id] > 0) ||
+          bereich.x + bereich.breite > 1 + Number.EPSILON ||
+          bereich.y + bereich.hoehe > 1 + Number.EPSILON))
+    )
+      return;
+    plattform = gewaehlt;
+    for (const radio of feld("plattformen").querySelectorAll("input"))
+      radio.checked = radio.value === plattform.kennung;
+    textfeld.value = daten.text;
+    dateiFehlt = dateiNeu;
+    maskeZeichnen();
+    markieren(bereich ? { x: bereich.x, y: bereich.y, breite: bereich.breite, hoehe: bereich.hoehe } : null);
+    ersteEcke = daten.ersteEcke ? { x: daten.ersteEcke.x, y: daten.ersteEcke.y } : null;
+    for (const id of namen) feld(id).value = daten.masse[id];
+    zeichnen();
+    rueckmeldung();
+  },
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werkstatt.example/formate/gemeinsam.schema.json",
+  "title": "Gemeinsame Bausteine der drei Formate",
+  "description": "Neuausrichtung, Phase 1 (23.11.2026). Was mehrere Formate brauchen, liegt hier einmal (Regel 8: Ein Baustein je Aufgabe). Profil, Auftrag und Video-Vorgabe verweisen mit $ref darauf. Das ist kein viertes Format, sondern der gemeinsame Wortschatz: Kennungen, Daten, Euro, Plattformen.",
+  "$defs": {
+    "kennung": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "maxLength": 80,
+      "description": "Kleinbuchstaben, Ziffern und Bindestriche. Gleich dem Dateinamen ohne Endung."
+    },
+    "einzeilig": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^\\r\\n]+$",
+      "description": "Ein nicht leerer Text in einer Zeile."
+    },
+    "datum": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+      "description": "Kalendertag als JJJJ-MM-TT, ohne Uhrzeit. Ob der Tag es gibt (30. Februar), prüft das Tor und später das Skript."
+    },
+    "datum_oder_null": {
+      "oneOf": [{ "$ref": "#/$defs/datum" }, { "type": "null" }],
+      "description": "Ein Kalendertag oder null, solange der Termin offen ist."
+    },
+    "euro": {
+      "type": "number",
+      "minimum": 0,
+      "multipleOf": 0.01,
+      "description": "Betrag in Euro auf den Cent. Gerechnet wird nie im Text, sondern im Skript der Lieferung."
+    },
+    "euro_oder_null": {
+      "oneOf": [{ "$ref": "#/$defs/euro" }, { "type": "null" }]
+    },
+    "steuerweg": {
+      "type": "string",
+      "enum": ["klein", "regel"],
+      "description": "klein = Kleinunternehmer nach § 19 UStG, regel = umsatzsteuerpflichtig. Dieselben Kürzel wie in der Preisliste (steuer.vorgabe)."
+    },
+    "plattform": {
+      "type": "string",
+      "enum": ["instagram", "tiktok", "youtube", "linkedin", "facebook", "pinterest", "andere"]
+    },
+    "seitenverhaeltnis": {
+      "type": "string",
+      "enum": ["9:16", "4:5", "1:1", "16:9"]
+    },
+    "quelle_eines_belegs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["art", "datum"],
+      "description": "Woher ein wörtliches Zitat stammt, damit man es wiederfindet.",
+      "properties": {
+        "art": { "type": "string", "enum": ["mail", "dm", "chat", "vertrag", "briefing", "anruf-notiz", "angebot"] },
+        "datum": { "$ref": "#/$defs/datum" },
+        "stelle": {
+          "$ref": "#/$defs/einzeilig",
+          "description": "Wo im Material: Betreff, Absatz, Paragraf oder Nachrichtenzeit."
+        }
+      }
+    }
+  }
+}

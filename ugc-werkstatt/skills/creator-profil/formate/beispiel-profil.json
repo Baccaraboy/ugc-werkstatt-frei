@@ -1,0 +1,1018 @@
+{
+  "$schema": "./profil.schema.json",
+  "format": "profil",
+  "formatfassung": 2,
+  "angelegt_am": "2026-11-23",
+  "geaendert_am": "2026-11-23",
+  "creator": {
+    "anzeigename": "Mia Beispiel",
+    "sitzland": "Deutschland"
+  },
+  "preise": {
+    "version": "2026.11.02",
+    "quelle": "Beispielpreise der Werkstatt, erfunden – bitte durch eigene ersetzen",
+    "waehrung": "EUR",
+    "rundung": 5,
+    "basis": 300,
+    "stufen": [250, 300, 400, 550],
+    "definition": "B = ein Konzept, 15–30 s, 1 Base + 1 Hook + 1 CTA, Aufnahme 9:16, Eigenproduktion,\nTalking Head, Skript vom Kunden, geschnitten mit einfachen Übergängen,\norganische Nutzung unbegrenzt und Paid Social 3 Monate, eine Korrekturschleife. Eine fertige Datei.\nNicht enthalten:\nMusik, Untertitel, Konzept und Skript, Sonderwünsche, Rohmaterial,\nweitere Formate, weitere Hooks oder CTAs, Paid-Nutzung über 3 Monate.",
+    "dimensionen": {
+      "N": {
+        "name": "Anzahl eigenständiger Konzepte",
+        "hint": "Verschiedene Skripte oder Themen. Weitere Hooks auf dieselbe Base sind kein neues Konzept — die stehen bei den Varianten.",
+        "optionen": [
+          {
+            "id": "N1",
+            "n": "1",
+            "f": 1.0
+          },
+          {
+            "id": "N2",
+            "n": "2",
+            "f": 0.97
+          },
+          {
+            "id": "N3",
+            "n": "3",
+            "f": 0.94
+          },
+          {
+            "id": "N4",
+            "n": "4",
+            "f": 0.92
+          },
+          {
+            "id": "N5",
+            "n": "5",
+            "f": 0.89
+          },
+          {
+            "id": "N8",
+            "n": "8",
+            "f": 0.86
+          },
+          {
+            "id": "N10",
+            "n": "10",
+            "f": 0.83
+          }
+        ]
+      },
+      "G": {
+        "name": "Sprache im Video",
+        "hint": "Die Sprache, die im Video gesprochen wird. Die Sprache der Rechnung schaltest du oben rechts um. Eine Zweitsprache braucht mehr Takes und mehr Sichtung.",
+        "optionen": [
+          {
+            "id": "G1",
+            "n": "Deutsch",
+            "f": 1.0,
+            "inv": "Sprache: Deutsch"
+          },
+          {
+            "id": "G2",
+            "n": "Englisch",
+            "f": 1.15,
+            "inv": "Sprache: Englisch"
+          }
+        ]
+      },
+      "L": {
+        "name": "Länge",
+        "optionen": [
+          {
+            "id": "L1",
+            "n": "15–30 s",
+            "f": 1.0,
+            "inv": "15–30 s"
+          },
+          {
+            "id": "L2",
+            "n": "30–60 s",
+            "f": 1.2,
+            "inv": "30–60 s"
+          },
+          {
+            "id": "L3",
+            "n": "60–120 s",
+            "f": 1.5,
+            "inv": "60–120 s"
+          }
+        ]
+      },
+      "A": {
+        "name": "Videotyp",
+        "optionen": [
+          {
+            "id": "A1",
+            "n": "Talking Head",
+            "f": 1.0,
+            "inv": "Talking Head"
+          },
+          {
+            "id": "A2",
+            "n": "Talking Head + B-Rolls",
+            "f": 1.2,
+            "inv": "Talking Head mit B-Rolls"
+          },
+          {
+            "id": "A3",
+            "n": "Voice-Over + B-Rolls",
+            "f": 1.15,
+            "inv": "Voice-Over über B-Rolls"
+          },
+          {
+            "id": "A4",
+            "n": "Storytelling",
+            "f": 1.35,
+            "inv": "Storytelling"
+          },
+          {
+            "id": "A5",
+            "n": "Storytelling + B-Rolls",
+            "f": 1.6,
+            "inv": "Storytelling mit B-Rolls"
+          }
+        ]
+      },
+      "P": {
+        "name": "Produktionsmodus",
+        "hint": "Vor Ort kostet ein fester Betrag je Konzept dazu.",
+        "optionen": [
+          {
+            "id": "P1",
+            "n": "Eigenproduktion",
+            "f": 1.0,
+            "inv": "Eigenproduktion"
+          },
+          {
+            "id": "P2",
+            "n": "Vor Ort, halber Tag",
+            "abs": 240,
+            "inv": "Produktion vor Ort beim Auftraggeber (bis 4 Std.)"
+          },
+          {
+            "id": "P3",
+            "n": "Vor Ort, ganzer Tag",
+            "abs": 420,
+            "inv": "Produktion vor Ort beim Auftraggeber (bis 8 Std.)"
+          }
+        ]
+      },
+      "F": {
+        "name": "Fertigungstiefe",
+        "optionen": [
+          {
+            "id": "F1",
+            "n": "Geschnitten",
+            "f": 1.0,
+            "inv": "geschnitten, mit einfachen Übergängen"
+          },
+          {
+            "id": "F2",
+            "n": "Nur Rohmaterial",
+            "f": 0.75,
+            "inv": "Rohmaterial ohne Schnitt — mindestens 2 Takes je Sequenz"
+          }
+        ]
+      },
+      "R": {
+        "name": "Aufnahmeformat",
+        "hint": "Wird vor dem Dreh festgelegt — ändert den Preis nicht.",
+        "optionen": [
+          {
+            "id": "R1",
+            "n": "9:16 vertikal",
+            "f": 1.0,
+            "inv": "Format 9:16"
+          },
+          {
+            "id": "R2",
+            "n": "4:5 / 1:1",
+            "f": 1.0,
+            "inv": "Format 4:5 bzw. 1:1"
+          },
+          {
+            "id": "R3",
+            "n": "16:9 horizontal",
+            "f": 1.0,
+            "inv": "Format 16:9"
+          }
+        ]
+      }
+    },
+    "postproduktion": [
+      {
+        "c": "K1",
+        "n": "Konzept & Skript nach Briefing",
+        "f": 0.25,
+        "inv": "Konzept und Skript nach dem Briefing des Kunden",
+        "raw": false
+      },
+      {
+        "c": "K2",
+        "n": "Konzept mit Drehplan",
+        "f": 0.45,
+        "inv": "Konzeption mit Recherche, Skript und Drehplan",
+        "raw": false
+      },
+      {
+        "c": "K3",
+        "n": "Musik",
+        "abs": 25,
+        "inv": "Musik: Auswahl, Lizenz und Einbau",
+        "raw": true
+      },
+      {
+        "c": "K4",
+        "n": "Untertitel",
+        "abs": 30,
+        "inv": "Untertitel im Bild",
+        "raw": true
+      },
+      {
+        "c": "K5",
+        "n": "Sonderwunsch je Element",
+        "f": 0.12,
+        "inv": "Sonderwunsch im Schnitt (Grafik, Effekt oder Ton)",
+        "raw": true
+      },
+      {
+        "c": "K6",
+        "n": "Rohmaterial dazu",
+        "f": 0.25,
+        "inv": "Übergabe des ungeschnittenen Rohmaterials zusätzlich",
+        "raw": true
+      },
+      {
+        "c": "K7",
+        "n": "Weiteres Format aus dem Master",
+        "f": 0.25,
+        "raw": true,
+        "fmt": true
+      },
+      {
+        "c": "K8",
+        "n": "Zweites Aufnahmeformat, eigener Dreh",
+        "f": 0.55,
+        "raw": false,
+        "fmt": true
+      },
+      {
+        "c": "K9",
+        "n": "Untertitel in weiterer Sprache",
+        "f": 0.12,
+        "inv": "Untertitel in einer weiteren Sprache, mit Übersetzung",
+        "raw": true
+      },
+      {
+        "c": "K10",
+        "n": "Voice-Over als eigene Datei",
+        "f": 0.18,
+        "inv": "Voice-Over als eigene Audiodatei",
+        "raw": false
+      },
+      {
+        "c": "K11",
+        "n": "Weitere Korrekturschleife",
+        "f": 0.12,
+        "inv": "Eine weitere Korrekturschleife",
+        "raw": true
+      },
+      {
+        "c": "K12",
+        "n": "Zweite Sprachfassung, eigener Dreh",
+        "f": 0.65,
+        "raw": false,
+        "inv": "Zweite Sprachfassung desselben Skripts, eigens gedreht"
+      }
+    ],
+    "inklusive": [
+      {
+        "c": "I1",
+        "n": "Musik",
+        "hint": "als Position ohne Preis ausweisen",
+        "pair": "K3",
+        "inv": "Musik: Auswahl, Lizenz und Einbau"
+      },
+      {
+        "c": "I2",
+        "n": "Untertitel",
+        "hint": "als Position ohne Preis ausweisen",
+        "pair": "K4",
+        "inv": "Untertitel im Bild"
+      }
+    ],
+    "varianten": [
+      {
+        "c": "V1",
+        "n": "Zusätzliche Hook",
+        "abs": 45,
+        "inv": "Zusätzliche Hook auf dieselbe Base (ein weiteres fertiges Video)",
+        "invRaw": "Zusätzliche Hook auf dieselbe Base, als Rohmaterial mit mindestens 2 Takes (eine weitere Variante)"
+      },
+      {
+        "c": "V2",
+        "n": "Zusätzlicher CTA",
+        "abs": 45,
+        "inv": "Zusätzlicher CTA auf dieselbe Base (ein weiteres fertiges Video)",
+        "invRaw": "Zusätzlicher CTA auf dieselbe Base, als Rohmaterial mit mindestens 2 Takes (eine weitere Variante)"
+      },
+      {
+        "c": "V3",
+        "n": "Standbild aus dem Material",
+        "f": 0.1,
+        "fmt": true
+      },
+      {
+        "c": "V4",
+        "n": "Standbild als Zuschnitt",
+        "f": 0.05,
+        "fmt": true
+      },
+      {
+        "c": "V5",
+        "n": "Standbild, eigene Aufnahme",
+        "f": 0.25,
+        "fmt": true
+      }
+    ],
+    "nutzung": [
+      {
+        "id": "U1",
+        "n": "Nur organisch",
+        "f": 0,
+        "note": "Kein Werbebudget",
+        "paid": false
+      },
+      {
+        "id": "U2",
+        "n": "Nur Paid",
+        "f": 0,
+        "note": "Anzeigen, kein Beitrag im Feed",
+        "paid": true
+      },
+      {
+        "id": "U3",
+        "n": "Organisch + Paid",
+        "f": 0,
+        "note": "Standard",
+        "paid": true
+      },
+      {
+        "id": "U4",
+        "n": "Dark Ads",
+        "f": 0,
+        "note": "Nur als Anzeige, nirgends öffentlich",
+        "paid": true
+      }
+    ],
+    "dauer": [
+      {
+        "id": "DA",
+        "n": "1 Monat",
+        "f": -0.1,
+        "mon": 1,
+        "inv": "1 Monat ab Freigabe"
+      },
+      {
+        "id": "DB",
+        "n": "2 Monate",
+        "f": -0.05,
+        "mon": 2,
+        "inv": "2 Monate ab Freigabe"
+      },
+      {
+        "id": "D1",
+        "n": "3 Monate",
+        "f": 0.0,
+        "mon": 3,
+        "note": "Standard, im Grundhonorar enthalten",
+        "inv": "3 Monate ab Freigabe"
+      },
+      {
+        "id": "D2",
+        "n": "6 Monate",
+        "f": 0.4,
+        "mon": 6,
+        "inv": "6 Monate ab Freigabe"
+      },
+      {
+        "id": "D3",
+        "n": "12 Monate",
+        "f": 0.8,
+        "mon": 12,
+        "inv": "12 Monate ab Freigabe"
+      },
+      {
+        "id": "D4",
+        "n": "24 Monate",
+        "f": 1.3,
+        "mon": 24,
+        "inv": "24 Monate ab Freigabe"
+      },
+      {
+        "id": "D5",
+        "n": "Unbegrenzt",
+        "f": 1.8,
+        "inv": "die gesamte Schutzdauer (Buyout)"
+      }
+    ],
+    "zusatzrechte": [
+      {
+        "c": "X1",
+        "n": "Whitelisting / Spark Ads",
+        "hint": "Anzeige läuft über den Creator-Account",
+        "f": 0.4,
+        "needsPaid": true
+      },
+      {
+        "c": "X6",
+        "n": "Collab Post",
+        "hint": "Gemeinsamer Beitrag über den Creator-Account",
+        "f": 0.35
+      },
+      {
+        "c": "X7",
+        "n": "Digital-Paket: alle weiteren Paid-Kanäle",
+        "hint": "Ein Paket für alle Kanäle außerhalb Paid Social, nicht je Kanal buchbar.",
+        "f": 0.45,
+        "needsPaid": true
+      },
+      {
+        "c": "X2",
+        "n": "TV / CTV",
+        "hint": "Bewegtbild außerhalb von Social Media",
+        "f": 0.9
+      },
+      {
+        "c": "X3",
+        "n": "OOH / Print",
+        "hint": "Plakat, Verkaufsort, Anzeigen",
+        "f": 0.6
+      },
+      {
+        "c": "X5",
+        "n": "Referenzverzicht",
+        "hint": "Keine Nutzung im Portfolio",
+        "abs": 150,
+        "je": "angebot"
+      }
+    ],
+    "exklusivitaet": [
+      {
+        "id": "E0",
+        "n": "Keine",
+        "f": 0.0
+      },
+      {
+        "id": "E1",
+        "n": "3 Monate",
+        "f": 0.2,
+        "inv": "Branchenexklusivität: kein Wettbewerber im selben Segment für 3 Monate ab Freigabe"
+      },
+      {
+        "id": "E2",
+        "n": "6 Monate",
+        "f": 0.4,
+        "inv": "Branchenexklusivität: kein Wettbewerber im selben Segment für 6 Monate ab Freigabe"
+      },
+      {
+        "id": "E3",
+        "n": "12 Monate",
+        "f": 0.8,
+        "inv": "Branchenexklusivität: kein Wettbewerber im selben Segment für 12 Monate ab Freigabe"
+      },
+      {
+        "id": "E4",
+        "n": "24 Monate",
+        "f": 1.5,
+        "inv": "Branchenexklusivität: kein Wettbewerber im selben Segment für 24 Monate ab Freigabe"
+      }
+    ],
+    "konditionen": [
+      {
+        "id": "C0",
+        "n": "Keine",
+        "f": 0.0
+      },
+      {
+        "id": "C1",
+        "n": "−5 %",
+        "f": 0.05,
+        "inv": "Kondition für Stammkunden (−5 % auf die Produktionsleistungen)"
+      },
+      {
+        "id": "C2",
+        "n": "−10 %",
+        "f": 0.1,
+        "inv": "Kondition für Stammkunden (−10 % auf die Produktionsleistungen)"
+      },
+      {
+        "id": "C3",
+        "n": "−15 %",
+        "f": 0.15,
+        "inv": "Kondition für Stammkunden (−15 % auf die Produktionsleistungen)"
+      },
+      {
+        "id": "C4",
+        "n": "−20 %",
+        "f": 0.2,
+        "inv": "Kondition für Agenturen (−20 % auf die Produktionsleistungen)"
+      },
+      {
+        "id": "C5",
+        "n": "−50 €",
+        "abs": 50,
+        "inv": "Fester Nachlass (−50 € auf die Produktionsleistungen)"
+      }
+    ],
+    "extras": [
+      {
+        "c": "Z1",
+        "n": "Karussell, 5 Bilder",
+        "f": 0.6,
+        "head": "Contenterstellung",
+        "inv": "Karussell-Beitrag mit 5 Bildern, Konzept und Texten im Bild"
+      },
+      {
+        "c": "Z2",
+        "n": "Foto-Paket, 5 Bilder",
+        "f": 0.3,
+        "head": "Contenterstellung",
+        "inv": "Foto-Paket: 5 ausgewählte und bearbeitete Bilder"
+      },
+      {
+        "c": "Z3",
+        "n": "Nur Schnitt, Material vom Kunden",
+        "f": 0.4,
+        "head": "Postproduktion",
+        "inv": "Schnitt von Material, das der Kunde liefert"
+      },
+      {
+        "c": "Z4",
+        "n": "Einsatz vor Ort, halber Tag",
+        "f": 0.9,
+        "head": "Einsatz vor Ort",
+        "inv": "Einsatz vor Ort nach Regie des Auftraggebers (bis 4 Std.)"
+      },
+      {
+        "c": "Z5",
+        "n": "Einsatz vor Ort, ganzer Tag",
+        "f": 1.6,
+        "head": "Einsatz vor Ort",
+        "inv": "Einsatz vor Ort nach Regie des Auftraggebers (bis 8 Std.)"
+      },
+      {
+        "c": "Z6",
+        "n": "Reisezeit je Stunde",
+        "f": 0.1,
+        "head": "Reisekosten",
+        "inv": "Reisezeit je Stunde"
+      },
+      {
+        "c": "Z7",
+        "n": "Anfahrt je km über 30 km",
+        "abs": 0.45,
+        "step": 10,
+        "head": "Reisekosten",
+        "inv": "Anfahrt über 30 km, je Kilometer"
+      }
+    ],
+    "en": {
+      "G1": {
+        "n": "Google Ads incl. Demand Gen",
+        "inv": "Language: German"
+      },
+      "G2": {
+        "inv": "Language: English"
+      },
+      "L1": {
+        "inv": "15–30 s"
+      },
+      "L2": {
+        "inv": "30–60 s"
+      },
+      "L3": {
+        "inv": "60–120 s"
+      },
+      "A1": {
+        "inv": "talking head"
+      },
+      "A2": {
+        "inv": "talking head with B-roll"
+      },
+      "A3": {
+        "inv": "voice-over over B-roll"
+      },
+      "A4": {
+        "inv": "storytelling"
+      },
+      "A5": {
+        "inv": "storytelling with B-roll"
+      },
+      "P2": {
+        "inv": "shot on location (up to 4 hrs)"
+      },
+      "P3": {
+        "inv": "shot on location (up to 8 hrs)"
+      },
+      "F1": {
+        "inv": "edited, with simple transitions"
+      },
+      "F2": {
+        "inv": "raw footage without editing — at least 2 takes per sequence"
+      },
+      "R1": {
+        "inv": "9:16 format"
+      },
+      "R2": {
+        "inv": "4:5 / 1:1 format"
+      },
+      "R3": {
+        "inv": "16:9 format"
+      },
+      "K1": {
+        "n": "Concept & script from the brief",
+        "inv": "Concept and script based on the client's brief"
+      },
+      "K2": {
+        "n": "Concept with shooting plan",
+        "inv": "Concept with research, script and shooting plan"
+      },
+      "K3": {
+        "n": "Music",
+        "inv": "Music: selection, licence and placement"
+      },
+      "K4": {
+        "n": "Subtitles",
+        "inv": "Burned-in subtitles"
+      },
+      "K5": {
+        "n": "Custom request per element",
+        "inv": "Custom request in the edit (graphic, effect or sound)"
+      },
+      "K6": {
+        "n": "Raw footage in addition",
+        "inv": "Delivery of the unedited raw footage in addition"
+      },
+      "K7": {
+        "n": "Additional format from the master"
+      },
+      "K8": {
+        "n": "Second capture format, separate shoot"
+      },
+      "K9": {
+        "n": "Subtitles in another language",
+        "inv": "Subtitles in another language, incl. translation"
+      },
+      "K10": {
+        "n": "Voice-over as a separate file",
+        "inv": "Voice-over as a separate audio file"
+      },
+      "K11": {
+        "n": "Additional revision round",
+        "inv": "One additional revision round"
+      },
+      "K12": {
+        "n": "Second language version, separate shoot",
+        "inv": "Second language version of the same script, shot separately"
+      },
+      "I1": {
+        "n": "Music",
+        "inv": "Music: selection, licence and placement"
+      },
+      "I2": {
+        "n": "Subtitles",
+        "inv": "Burned-in subtitles"
+      },
+      "V1": {
+        "n": "Additional hook",
+        "inv": "Additional hook on the same base (one more finished video)",
+        "invRaw": "Additional hook on the same base, as raw footage with at least 2 takes (one more variant)"
+      },
+      "V2": {
+        "n": "Additional CTA",
+        "inv": "Additional CTA on the same base (one more finished video)",
+        "invRaw": "Additional CTA on the same base, as raw footage with at least 2 takes (one more variant)"
+      },
+      "V3": {
+        "n": "Still from the footage"
+      },
+      "V4": {
+        "n": "Still as a crop"
+      },
+      "V5": {
+        "n": "Still, separate capture"
+      },
+      "DA": {
+        "n": "1 month",
+        "inv": "1 month from approval"
+      },
+      "DB": {
+        "n": "2 months",
+        "inv": "2 months from approval"
+      },
+      "D1": {
+        "n": "3 months",
+        "inv": "3 months from approval"
+      },
+      "D2": {
+        "n": "6 months",
+        "inv": "6 months from approval"
+      },
+      "D3": {
+        "n": "12 months",
+        "inv": "12 months from approval"
+      },
+      "D4": {
+        "n": "24 months",
+        "inv": "24 months from approval"
+      },
+      "D5": {
+        "n": "Unlimited",
+        "inv": "the full term of protection (buyout)"
+      },
+      "E1": {
+        "n": "3 months",
+        "inv": "Category exclusivity: no competitor in the same segment for 3 months from approval"
+      },
+      "E2": {
+        "n": "6 months",
+        "inv": "Category exclusivity: no competitor in the same segment for 6 months from approval"
+      },
+      "E3": {
+        "n": "12 months",
+        "inv": "Category exclusivity: no competitor in the same segment for 12 months from approval"
+      },
+      "E4": {
+        "n": "24 months",
+        "inv": "Category exclusivity: no competitor in the same segment for 24 months from approval"
+      },
+      "X1": {
+        "n": "Whitelisting / Spark Ads"
+      },
+      "X6": {
+        "n": "Collab post"
+      },
+      "X7": {
+        "n": "Digital package: all further paid channels"
+      },
+      "X2": {
+        "n": "TV / CTV"
+      },
+      "X3": {
+        "n": "OOH / print"
+      },
+      "X5": {
+        "n": "Waiver of portfolio use"
+      },
+      "C1": {
+        "inv": "Returning-client rate (−5 % on the production services)"
+      },
+      "C2": {
+        "inv": "Returning-client rate (−10 % on the production services)"
+      },
+      "C3": {
+        "inv": "Returning-client rate (−15 % on the production services)"
+      },
+      "C4": {
+        "inv": "Agency rate (−20 % on the production services)"
+      },
+      "C5": {
+        "inv": "Fixed discount (−50 € on the production services)"
+      },
+      "G5": {
+        "n": "Retail Media · Amazon Ads etc."
+      },
+      "Z1": {
+        "n": "Carousel, 5 images",
+        "head": "Content creation",
+        "inv": "Carousel post with 5 images, concept and text overlays"
+      },
+      "Z2": {
+        "n": "Photo package, 5 images",
+        "head": "Content creation",
+        "inv": "Photo package: 5 selected and edited images"
+      },
+      "Z3": {
+        "n": "Edit only, client footage",
+        "head": "Post-production",
+        "inv": "Edit of footage supplied by the client"
+      },
+      "Z4": {
+        "n": "On location, half day",
+        "head": "On location",
+        "inv": "On-location work under the client's direction (up to 4 hrs)"
+      },
+      "Z5": {
+        "n": "On location, full day",
+        "head": "On location",
+        "inv": "On-location work under the client's direction (up to 8 hrs)"
+      },
+      "Z6": {
+        "n": "Travel time per hour",
+        "head": "Travel",
+        "inv": "Travel time per hour"
+      },
+      "Z7": {
+        "n": "Mileage per km beyond 30 km",
+        "head": "Travel",
+        "inv": "Travel beyond 30 km, per kilometre"
+      }
+    },
+    "ui": {
+      "de": {
+        "loc": "de-DE",
+        "posHead": "Contenterstellung – Kurzvideo",
+        "content": "Contenterstellung",
+        "rights": "Nutzungsrechte",
+        "rebate": "Nachlass",
+        "rightsRebate": "Nachlass Nutzungsrechte",
+        "incl": "inklusive",
+        "pos": "Position",
+        "whole": "klicken = ganze Position",
+        "label": "Bezeichnung",
+        "desc": "Beschreibung",
+        "qty": "Menge",
+        "unit": "Einzel €",
+        "total": "Gesamt €",
+        "copy": "kopieren",
+        "closing": "Abschluss",
+        "subtotal": "Zwischensumme netto",
+        "clause": "Nutzungsrechte-Klausel",
+        "terms": "Konditionen",
+        "price": "Preis",
+        "netTotal": "Gesamt netto",
+        "vatNote": "Umsatzsteuerfrei nach § 19 UStG",
+        "shortHead": "Kurzübersicht",
+        "wholeBlock": "klicken = ganzer Block",
+        "shortTotal": "Gesamt netto (§ 19 UStG)",
+        "results": "Ergibt insgesamt",
+        "videos": "Videos",
+        "oneConcept": "1 Konzept",
+        "oneConceptLong": "Ein Konzept",
+        "base": "(1 Base, 1 Hook, 1 CTA)",
+        "shortened": "Kürzere Laufzeit: ",
+        "shortRun": "kürzere Laufzeit",
+        "rightsPaid": "Nutzungsrechte — Paid ",
+        "rebateShort": "Nachlass kurze Laufzeit — Paid ",
+        "excl": "Branchenexklusivität ",
+        "paidSocial": "Paid Social",
+        "paidOnly": "Nur Paid",
+        "dark": "Dark Ads",
+        "organicOnly": "Nur organische Nutzung, zeitlich unbegrenzt",
+        "chanTV": "TV, Connected TV, Out-of-Home und Print",
+        "chanTVonly": "TV und Connected TV",
+        "chanOOH": "Out-of-Home und Print",
+        "noWL": "· Kein Whitelisting und keine Spark Ads über den Creator-Account ohne eigene Vereinbarung.\n",
+        "noShare": "· Keine Weitergabe an Dritte und keine Unterlizenzen.\n",
+        "refYes": "· Die Inhalte dürfen im Portfolio und auf den Kanälen des Auftragnehmers als Referenz gezeigt werden.",
+        "refNo": "· Die Inhalte werden nicht als Referenz gezeigt (Referenzverzicht, siehe eigene Position).",
+        "termsText": "Eine Korrekturschleife ist enthalten.\nUmsatzsteuerfreie Leistungen nach § 19 UStG.\nZahlbar innerhalb von 14 Tagen ohne Abzug.",
+        "intro": "Vielen Dank für den Auftrag. Folgende Leistungen werden berechnet:\n\n",
+        "posShort": "Pos.",
+        "sumNet": "Zwischensumme (netto)",
+        "vatLine": "Umsatzsteuer 0 %",
+        "grand": "Gesamtbetrag",
+        "rightsCaps": "NUTZUNGSRECHTE"
+      },
+      "en": {
+        "loc": "en-GB",
+        "posHead": "Content creation – short video",
+        "content": "Content creation",
+        "rights": "Usage rights",
+        "rebate": "Discount",
+        "rightsRebate": "Usage rights discount",
+        "incl": "included",
+        "pos": "Item",
+        "whole": "click = whole item",
+        "label": "Title",
+        "desc": "Description",
+        "qty": "Qty",
+        "unit": "Unit €",
+        "total": "Total €",
+        "copy": "copy",
+        "closing": "Summary",
+        "subtotal": "Subtotal, net",
+        "clause": "Usage rights clause",
+        "terms": "Terms",
+        "price": "Price",
+        "netTotal": "Total, net",
+        "vatNote": "VAT exempt under § 19 German VAT Act",
+        "shortHead": "Summary",
+        "wholeBlock": "click = whole block",
+        "shortTotal": "Total, net (§ 19 German VAT Act)",
+        "results": "Resulting in",
+        "videos": "videos",
+        "oneConcept": "1 concept",
+        "oneConceptLong": "One concept",
+        "base": "(1 base, 1 hook, 1 CTA)",
+        "shortened": "Shorter term: ",
+        "shortRun": "shorter term",
+        "rightsPaid": "Usage rights — paid ",
+        "rebateShort": "Discount for a shorter term — paid ",
+        "excl": "Category exclusivity ",
+        "paidSocial": "Paid social",
+        "paidOnly": "Paid only",
+        "dark": "Dark ads",
+        "organicOnly": "Organic use only, unlimited in time",
+        "chanTV": "TV, connected TV, out-of-home and print",
+        "chanTVonly": "TV and connected TV",
+        "chanOOH": "out-of-home and print",
+        "noWL": "· No whitelisting and no Spark Ads via the creator account without a separate agreement.\n",
+        "noShare": "· No transfer to third parties and no sub-licences.\n",
+        "refYes": "· The contractor may show the content as a reference in its portfolio and on its channels.",
+        "refNo": "· The content will not be shown as a reference (waiver of portfolio use, see separate item).",
+        "termsText": "One revision round is included.\nVAT exempt under § 19 German VAT Act (small business scheme).\nPayable within 14 days without deduction.",
+        "intro": "Thank you for the order. The following services will be invoiced:\n\n",
+        "posShort": "Item",
+        "sumNet": "Subtotal (net)",
+        "vatLine": "VAT 0 %",
+        "grand": "Total amount",
+        "rightsCaps": "USAGE RIGHTS"
+      }
+    },
+    "steuer": {
+      "vorgabe": "klein",
+      "satz": 19,
+      "gesamtzeile": {
+        "klein": {
+          "de": "Gesamt: {netto} netto (umsatzsteuerfrei nach § 19 UStG)",
+          "en": "Total: {netto} net (VAT exempt under § 19 German VAT Act)"
+        },
+        "regel": {
+          "de": "Gesamt: {netto} netto zzgl. {satz} % USt ({ust}) = {brutto} brutto",
+          "en": "Total: {netto} net plus {satz}% VAT ({ust}) = {brutto} gross"
+        }
+      },
+      "hinweis": {
+        "klein": {
+          "de": "Umsatzsteuerfreie Leistungen nach § 19 UStG.",
+          "en": "VAT exempt under § 19 German VAT Act (small business scheme)."
+        },
+        "regel": {
+          "de": "Alle Beträge zzgl. {satz} % Umsatzsteuer.",
+          "en": "All amounts plus {satz}% VAT."
+        }
+      },
+      "steuerzeile": {
+        "regel": {
+          "de": "Umsatzsteuer {satz} %",
+          "en": "VAT {satz}%"
+        }
+      }
+    }
+  },
+  "steuerlage": {
+    "ruecklage_satz_prozent": 30,
+    "regelbesteuerung_ab": "2028-01-01"
+  },
+  "nische": {
+    "vorstellungssatz": "Ich zeige Haushaltsprodukte so, wie sie im Alltag wirklich benutzt werden.",
+    "themen": ["Haushalt", "Küche", "Wohnen"],
+    "videoarten": ["Talking Head", "Produkt in der Hand", "Vorher-nachher"],
+    "ausgeschlossen": ["Glücksspiel", "Tabak"]
+  },
+  "plattformen": [
+    {
+      "plattform": "instagram",
+      "schwerpunkt": true,
+      "profilname": "mia.beispiel"
+    },
+    {
+      "plattform": "tiktok",
+      "profilname": "mia.beispiel"
+    }
+  ],
+  "ton": {
+    "anrede": "Hallo zusammen, du-Form, Vorname",
+    "ton": "locker und direkt, ohne Floskeln – «ich mag es kurz»",
+    "satzlaenge": "kurze Sätze, selten mehr als fünfzehn Wörter",
+    "wendungen": ["«passt für mich»", "«lass uns das so machen»"],
+    "emojis": "selten, höchstens ein Daumen oder ein Lächeln am Ende",
+    "grussformel": "Viele Grüße",
+    "nie": ["Ausrufezeichen-Ketten", "«Sehr geehrte Damen und Herren»"],
+    "stilproben": [
+      "Hallo Frau Muster, danke für die Anfrage. Das Produkt passt gut zu mir. Hier mein Vorschlag: ein Video, drei Hooks. Viele Grüße"
+    ],
+    "ermittelt_am": "2026-11-23"
+  },
+  "sprechtempo": {
+    "woerter_je_minute": 150,
+    "ermittelt_am": "2026-11-23",
+    "aus": "Beispielwert, erfunden"
+  },
+  "einstellungen": {
+    "anrede_marken": "du",
+    "zaehlweise": "kalendermonate",
+    "erinnerung_vorlauf_tage": 14,
+    "zahlungsziel_tage": 14,
+    "korrekturrunden_inklusive": 1
+  },
+  "buero": {
+    "auftragsordner": "~/Filme/Aufträge",
+    "eingang": "~/Filme/Eingang",
+    "export": "~/Filme/Export",
+    "sicherungsziel": "/Volumes/Sicherung"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "ugc-werkstatt",
+  "owner": {
+    "name": "UGC-Werkstatt"
+  },
+  "description": "KI-Werkzeuge für UGC-Creator.",
+  "plugins": [
+    {
+      "name": "ugc-werkstatt",
+      "source": "./ugc-werkstatt",
+      "description": "KI-Werkzeuge für UGC-Creator.",
+      "version": "1.3"
+    }
+  ]
+}

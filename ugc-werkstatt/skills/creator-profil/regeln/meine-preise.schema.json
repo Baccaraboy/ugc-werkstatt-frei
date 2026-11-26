@@ -1,0 +1,140 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/Baccaraboy/n8n-baccaratv/geteilt/ratecard.schema.json",
+ "title": "RateCard",
+ "description": "Eine Rate Card, wie Marius' Konfigurator sie rechnet (Landkarte Z2). Schreiber: die NAS-Automation (tools/ratecard_export.py). Leser: baccaratv/ratecard.py (Python), kern/ratecard im Anfrage-Check (TypeScript), die Golden-Fälle in geteilt/golden/, die Vorlage geteilt/konfigurator/. Das Vokabular ist das der Karte: n = Name (Beschriftung), f = Faktor, abs = fester Betrag in Euro netto, inv = Rechnungstext, c/id = Code. Seit geteilt/VERSION 2026.11.01-3 (Lieferung 5d) trägt jeder bepreiste Eintrag genau eins von f und abs (oneOf); eine Karte ohne abs rechnet wie vorher. abs wird nie gerundet, f-Beträge mit r5. Rechenweg (n = Zahl der Konzepte, Video = Preis je Konzept, tB = Summe der Videos = Video × n): Video = r5(B × Faktoren der Dimensionen) + Summe der abs der Dimensionen (N bleibt Faktor); Postproduktion = r5(f × Video) oder abs, je Stück; Varianten = r5(f × B) oder abs, je Stück; Dauer, Exklusivität, Zusatzrechte = r5(f × tB) oder abs × n (je = video, die Vorgabe) bzw. abs pauschal (je = angebot); Extras = r5(f × B) oder abs, je Stück; Kondition = r5(f × Produktion) oder abs, höchstens die Produktion, nie auf Rechte; die Nutzung (U…) ändert den Preis nicht. r5 rundet auf volle 5 € (Math.round(x/5 − 1e-9) × 5, wie JavaScript). Seit geteilt/VERSION 2026.11.01-4 (Lieferung 5c) trägt die Karte den Block steuer: die Gesamtzeile für beide Steuerwege (klein = Kleinunternehmer, regel = umsatzsteuerpflichtig mit netto, Umsatzsteuer und brutto); fehlt er, gilt klein mit den Texten von vorher. Seit geteilt/VERSION 2026.11.02-1 (Lieferung 5b) trägt der Block auch die Texte der Rechnung je Weg (hinweis, steuerzeile — freiwillig): Der Abschluss der Rechnung (ui.termsText) tauscht seine Hinweis-Zeile mit dem Weg, und bei regel nennt die Steuer-Zeile den Satz. Alle Beträge sind netto; eine Summe unter 0 € ist kein Preis, sondern ein Fehler mit Grund.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["version", "waehrung", "rundung", "basis", "dimensionen", "postproduktion", "inklusive", "varianten", "nutzung", "dauer", "zusatzrechte", "exklusivitaet", "konditionen", "extras"],
+ "properties": {
+  "$schema": {"type": "string"},
+  "version": {"type": "string", "description": "Stand der Daten, Kalenderform JJJJ.MM.TT[-n]; steigt mit geteilt/VERSION, wenn sich der Inhalt ändert.", "pattern": "^[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}(-[0-9]+)?$"},
+  "quelle": {"type": "string", "description": "Woher der Stand kommt (Datei, Datum, Werkzeug). Nur zur Information."},
+  "waehrung": {"type": "string", "const": "EUR"},
+  "rundung": {"type": "integer", "const": 5, "description": "Jeder Betrag aus einem Faktor wird auf volle 5 € gerundet (r5); ein fester Betrag (abs) nicht."},
+  "basis": {"type": "integer", "minimum": 50, "maximum": 5000, "description": "Basishonorar B in Euro für ein Konzept in der Grundausstattung (siehe definition)."},
+  "stufen": {"type": "array", "items": {"type": "integer"}, "description": "Vorgesehene Werte für B, wie die Karte sie anbietet."},
+  "definition": {"type": "string", "description": "Was B enthält und was nicht – der Text aus der Karte."},
+  "dimensionen": {
+   "type": "object",
+   "description": "Die sieben Dimensionen eines Konzepts. Jede Auswahl trägt einen Faktor oder einen festen Aufschlag: Video = r5(B × Produkt der Faktoren) + Summe der festen Aufschläge (je Konzept, nicht gerundet). N = Anzahl eigenständiger Konzepte (n ist die Zahl; ihr Faktor ist eine Mengenregel und bleibt ein Faktor, er gilt nur für B × Faktoren), G Sprache, L Länge, A Videotyp, P Produktionsmodus, F Fertigungstiefe (F2 = nur Rohmaterial: Postproduktion mit raw=true entfällt), R Aufnahmeformat.",
+   "required": ["N", "G", "L", "A", "P", "F", "R"],
+   "additionalProperties": false,
+   "properties": {
+    "N": {"$ref": "#/$defs/dimension_n"}, "G": {"$ref": "#/$defs/dimension"}, "L": {"$ref": "#/$defs/dimension"},
+    "A": {"$ref": "#/$defs/dimension"}, "P": {"$ref": "#/$defs/dimension"}, "F": {"$ref": "#/$defs/dimension"},
+    "R": {"$ref": "#/$defs/dimension"}
+   }
+  },
+  "postproduktion": {"type": "array", "description": "Positionen je Video (Code K…): Preis = r5(f × Videopreis) oder abs, je Stück × Menge. raw=true: entfällt bei Rohmaterial (F2).", "items": {"$ref": "#/$defs/position"}},
+  "inklusive": {"type": "array", "description": "Kostenlose Positionen, die als «inklusive» ausgewiesen werden können (Code I…); pair = die bezahlte Position, zu der sie gehört.", "items": {"$ref": "#/$defs/inklusiv"}},
+  "varianten": {"type": "array", "description": "Varianten desselben Konzepts (Code V…, z. B. zusätzliche Hook): Preis = r5(f × B) oder abs, je Stück × Menge; jede Variante ergibt ein weiteres Video.", "items": {"$ref": "#/$defs/position"}},
+  "nutzung": {"type": "array", "description": "Nutzungsart (Code U…): paid=true heißt Werbenutzung – dann gilt eine Dauer und Zusatzrechte sind möglich. Der Plattform-Umfang ändert den Preis nicht: f wird weder in der Karte noch auf der NAS gerechnet (darum kein abs).", "items": {"$ref": "#/$defs/nutzung"}},
+  "dauer": {"type": "array", "description": "Laufzeit der Paid-Rechte (Code D…): r5(f × Summe der Videos) oder abs × n (je Video-Konzept; pauschal mit je = angebot); mon = Monate (fehlt bei unbegrenzt); negativ (f oder abs) = kürzer als inklusive.", "items": {"$ref": "#/$defs/dauer"}},
+  "zusatzrechte": {"type": "array", "description": "Zusätzliche Rechte (Code X…, z. B. Whitelisting): r5(f × Summe der Videos) oder abs × n (pauschal mit je = angebot); needsPaid=true nur bei Paid-Nutzung.", "items": {"$ref": "#/$defs/zusatzrecht"}},
+  "exklusivitaet": {"type": "array", "description": "Branchenexklusivität (Code E…, E0 = keine): r5(f × Summe der Videos) oder abs × n (pauschal mit je = angebot).", "items": {"$ref": "#/$defs/exklusivitaet"}},
+  "konditionen": {"type": "array", "description": "Konditionen (Code C…, C0 = keine): Nachlass auf die Produktionsleistungen, nie auf Rechte — f ist der Anteil (0,1 = 10 % Nachlass, gerechnet −r5(f × Produktion)), abs ein fester Nachlass in Euro, höchstens die Produktion; beide positiv. Setzt nur der Mensch, nie die KI (Regel «Nachlass nie automatisch»).", "items": {"$ref": "#/$defs/kondition"}},
+  "extras": {"type": "array", "description": "Weitere Leistungen (Code Z…): r5(f × B) oder ein fester Betrag abs, je Einheit × Menge (step = Mengenschritt); head = Überschrift auf der Rechnung.", "items": {"$ref": "#/$defs/extra"}},
+  "en": {"type": "object", "description": "Englische Beschriftungen je Code: n (Name), inv (Rechnungstext), invRaw (Rechnungstext bei Rohmaterial), head (Überschrift). Fehlt ein Code, gilt der deutsche Text.", "additionalProperties": {"type": "object", "additionalProperties": false, "properties": {"n": {"type": "string"}, "inv": {"type": "string"}, "invRaw": {"type": "string"}, "head": {"type": "string"}}}},
+  "ui": {"type": "object", "description": "Feste Wörter der Kurzübersicht je Sprache (incl, rights, paidSocial, paidOnly, dark, shortRun, organicOnly, excl, oneConcept …), wie die Karte sie führt.", "additionalProperties": {"type": "object", "additionalProperties": {"type": "string"}}},
+  "steuer": {"$ref": "#/$defs/steuer"}
+ },
+ "$defs": {
+  "faktor_oder_betrag": {
+   "description": "Genau eins von f (Faktor) und abs (fester Betrag in Euro netto, nie gerundet) — seit Lieferung 5d für jeden bepreisten Eintrag.",
+   "oneOf": [{"required": ["f"]}, {"required": ["abs"]}]
+  },
+  "je": {"type": "string", "enum": ["video", "angebot"], "default": "video", "description": "Nur mit abs: video (Vorgabe) = der Betrag je Video-Konzept, mal der Zahl der Konzepte n; angebot = einmal für das ganze Angebot, pauschal."},
+  "dimension": {
+   "type": "object", "additionalProperties": false, "required": ["name", "optionen"],
+   "properties": {
+    "name": {"type": "string"}, "hint": {"type": "string"},
+    "optionen": {"type": "array", "minItems": 1, "items": {
+     "type": "object", "additionalProperties": false, "required": ["id", "n"], "$ref": "#/$defs/faktor_oder_betrag",
+     "properties": {"id": {"type": "string"}, "n": {"type": "string", "description": "Beschriftung."}, "f": {"type": "number", "description": "Faktor auf den Videopreis (Produkt aller Faktoren × B, dann r5)."}, "abs": {"type": "number", "minimum": 0, "description": "Fester Aufschlag je Video-Konzept in Euro, nach r5(B × Faktoren) addiert, nicht gerundet; 0 = kein Aufschlag."}, "inv": {"type": "string"}}
+    }}
+   }
+  },
+  "dimension_n": {
+   "type": "object", "additionalProperties": false, "required": ["name", "optionen"],
+   "description": "Die Dimension N (Zahl der Konzepte): ihr Faktor ist eine Mengenregel und bleibt ein Faktor — kein abs.",
+   "properties": {
+    "name": {"type": "string"}, "hint": {"type": "string"},
+    "optionen": {"type": "array", "minItems": 1, "items": {
+     "type": "object", "additionalProperties": false, "required": ["id", "n", "f"],
+     "properties": {"id": {"type": "string"}, "n": {"type": "string", "description": "Beschriftung; bei N die Anzahl als Zahl im Text."}, "f": {"type": "number"}, "inv": {"type": "string"}}
+    }}
+   }
+  },
+  "position": {
+   "type": "object", "additionalProperties": false, "required": ["c", "n"], "$ref": "#/$defs/faktor_oder_betrag",
+   "properties": {"c": {"type": "string"}, "n": {"type": "string"}, "f": {"type": "number", "description": "Postproduktion: Faktor auf den Videopreis · Varianten: Faktor auf B; je Stück r5."}, "abs": {"type": "number", "minimum": 0, "description": "Fester Betrag je Stück in Euro, nicht gerundet."}, "inv": {"type": "string"}, "invRaw": {"type": "string", "description": "Rechnungstext bei Rohmaterial."}, "fmt": {"type": "boolean", "description": "Position ist ein weiteres Format (zählt wie ein Video)."}, "raw": {"type": "boolean"}}
+  },
+  "inklusiv": {
+   "type": "object", "additionalProperties": false, "required": ["c", "n"],
+   "properties": {"c": {"type": "string"}, "n": {"type": "string"}, "hint": {"type": "string"}, "pair": {"type": "string"}, "inv": {"type": "string"}}
+  },
+  "nutzung": {
+   "type": "object", "additionalProperties": false, "required": ["id", "n", "f"],
+   "properties": {"id": {"type": "string"}, "n": {"type": "string"}, "f": {"type": "number", "description": "Wird nicht gerechnet (Plattform-Umfang ist preisneutral); die Karte führt 0."}, "paid": {"type": "boolean"}, "note": {"type": "string"}, "short": {"type": "string"}, "inv": {"type": "string"}}
+  },
+  "dauer": {
+   "type": "object", "additionalProperties": false, "required": ["id", "n"], "$ref": "#/$defs/faktor_oder_betrag",
+   "dependentRequired": {"je": ["abs"]},
+   "properties": {"id": {"type": "string"}, "n": {"type": "string"}, "f": {"type": "number", "description": "Faktor auf die Summe der Videos; 0 = inklusive, negativ = kürzer als inklusive (Nachlass)."}, "abs": {"type": "number", "description": "Fester Betrag in Euro, nicht gerundet: je Video-Konzept × n, pauschal mit je = angebot; 0 = inklusive, negativ = kürzer als inklusive (Nachlass) — wie f."}, "je": {"$ref": "#/$defs/je"}, "mon": {"type": "integer"}, "note": {"type": "string"}, "inv": {"type": "string"}}
+  },
+  "zusatzrecht": {
+   "type": "object", "additionalProperties": false, "required": ["c", "n"], "$ref": "#/$defs/faktor_oder_betrag",
+   "dependentRequired": {"je": ["abs"]},
+   "properties": {"c": {"type": "string"}, "n": {"type": "string"}, "f": {"type": "number", "description": "Faktor auf die Summe der Videos."}, "abs": {"type": "number", "minimum": 0, "description": "Fester Betrag in Euro, nicht gerundet: je Video-Konzept × n, pauschal mit je = angebot."}, "je": {"$ref": "#/$defs/je"}, "hint": {"type": "string"}, "needsPaid": {"type": "boolean"}, "inv": {"type": "string"}}
+  },
+  "exklusivitaet": {
+   "type": "object", "additionalProperties": false, "required": ["id", "n"], "$ref": "#/$defs/faktor_oder_betrag",
+   "dependentRequired": {"je": ["abs"]},
+   "properties": {"id": {"type": "string"}, "n": {"type": "string"}, "f": {"type": "number", "description": "Faktor auf die Summe der Videos; 0 = keine."}, "abs": {"type": "number", "minimum": 0, "description": "Fester Betrag in Euro, nicht gerundet: je Video-Konzept × n, pauschal mit je = angebot; 0 = keine."}, "je": {"$ref": "#/$defs/je"}, "inv": {"type": "string"}}
+  },
+  "kondition": {
+   "type": "object", "additionalProperties": false, "required": ["id", "n"], "$ref": "#/$defs/faktor_oder_betrag",
+   "properties": {"id": {"type": "string"}, "n": {"type": "string"}, "f": {"type": "number", "description": "Anteil des Nachlasses auf die Produktion (0,1 = 10 %); 0 = keiner."}, "abs": {"type": "number", "minimum": 0, "description": "Fester Nachlass in Euro auf die Produktion, nicht gerundet, höchstens die Produktion; 0 = keiner."}, "inv": {"type": "string"}}
+  },
+  "extra": {
+   "type": "object", "additionalProperties": false, "required": ["c", "n"], "$ref": "#/$defs/faktor_oder_betrag",
+   "properties": {"c": {"type": "string"}, "n": {"type": "string"}, "f": {"type": "number", "description": "Faktor auf B, je Einheit r5."}, "abs": {"type": "number", "minimum": 0, "description": "Fester Betrag je Einheit in Euro, nicht gerundet."}, "step": {"type": "number"}, "head": {"type": "string"}, "inv": {"type": "string"}}
+  },
+  "steuer": {
+   "type": "object", "additionalProperties": false, "required": ["vorgabe", "satz", "gesamtzeile"],
+   "description": "Die Gesamtzeile für beide Steuerwege (Lieferung 5c, 01.11.2026; Marius: «immer beides mitbedenken absofort und überall»). Welcher Weg gilt, entscheidet der Aufrufer: die Konfiguration darf steuer (klein | regel) tragen, sonst gilt vorgabe, sonst klein. Fehlt der Block (ältere Karten, die erfundenen Karten von G9–G11), gilt klein mit den Texten von vorher: «Gesamt: {netto} netto (umsatzsteuerfrei nach § 19 UStG)» und «Total: {netto} net (VAT exempt under § 19 German VAT Act)»; regel ist dann ein Fehler mit Grund. Rechenweg: netto = die Summe der Karte auf den Cent; bei regel Umsatzsteuer = netto × satz ÷ 100 auf den Cent, kaufmännisch gerundet (die Hälfte nach oben — nicht zur geraden Zahl), brutto = netto + Umsatzsteuer; bei klein Umsatzsteuer 0 und brutto = netto. Positionen, Staffel und Budget-Abgleich bleiben netto. Die Zeile: Platzhalter {netto}, {satz}, {ust}, {brutto}, ersetzt als Text (kein Format-Befehl, andere Klammern bleiben stehen); bei klein {netto} = {brutto} = die Summe in ganzen Euro wie bisher, {satz} = 0, {ust} = 0 €; bei regel alle drei Beträge mit Cent nur, wo es welche gibt (1.715 €, 325,85 €), {satz} ohne Nullen hinten (19, 7,5). Seit Lieferung 5b (02.11.2026) trägt der Block freiwillig auch die Texte der Rechnung je Weg: hinweis (die Hinweis-Zeile im Abschluss) und steuerzeile (die Steuer-Zeile der Rechnung bei regel); fehlen sie, gelten die Texte, die dort genannt sind.",
+   "properties": {
+    "vorgabe": {"type": "string", "enum": ["klein", "regel"], "description": "Der Weg, wenn die Konfiguration keinen nennt: klein = Kleinunternehmer (umsatzsteuerfrei), regel = umsatzsteuerpflichtig."},
+    "satz": {"type": "number", "exclusiveMinimum": 0, "maximum": 100, "description": "Umsatzsteuersatz in Prozent beim Weg regel (19 = 19 %), höchstens zwei Stellen nach dem Komma; bei klein ohne Wirkung."},
+    "gesamtzeile": {
+     "type": "object", "additionalProperties": false, "required": ["klein", "regel"],
+     "description": "Die letzte Zeile der Kurzübersicht je Weg und Sprache (de, en; weitere Sprachen erlaubt), Platzhalter {netto}, {satz}, {ust}, {brutto}.",
+     "properties": {
+      "klein": {"$ref": "#/$defs/zeile_je_sprache"},
+      "regel": {"$ref": "#/$defs/zeile_je_sprache"}
+     }
+    },
+    "hinweis": {
+     "type": "object", "additionalProperties": false, "required": ["klein", "regel"],
+     "description": "Die Hinweis-Zeile im Abschluss der Rechnung je Weg und Sprache, Platzhalter {satz} (Lieferung 5b, 02.11.2026). Freiwillig; fehlt sie, gelten «Umsatzsteuerfreie Leistungen gemäß § 19 UStG.» und «VAT exempt under § 19 German VAT Act (small business scheme).» bei klein, «Alle Beträge zzgl. {satz} % Umsatzsteuer.» und «All amounts plus {satz}% VAT.» bei regel. Regel «Abschluss je Weg»: Der Abschluss ist ui.<sprache>.termsText, Zeile für Zeile; jede Zeile, die genau die Hinweis-Zeile des anderen Wegs ist (wie hier mit {satz} oder mit dem Satz gefüllt), wird die des gewählten Wegs; steht keine Hinweis-Zeile da, kommt die des gewählten Wegs als letzte Zeile dazu; danach wird {satz} als Text ersetzt (regel: der Satz, klein: 0), andere Klammern bleiben. So pflegt die Creatorin einen Text, und die Steuerzeile wechselt mit dem Weg.",
+     "properties": {
+      "klein": {"$ref": "#/$defs/zeile_je_sprache"},
+      "regel": {"$ref": "#/$defs/zeile_je_sprache"}
+     }
+    },
+    "steuerzeile": {
+     "type": "object", "additionalProperties": false, "required": ["regel"],
+     "description": "Die Steuer-Zeile der Rechnung beim Weg regel je Sprache, Platzhalter {satz} (Lieferung 5b): im Abschluss und in der ganzen Rechnung neben dem Betrag der Umsatzsteuer, darunter der Gesamtbetrag brutto. Freiwillig; fehlt sie, gelten «Umsatzsteuer {satz} %» und «VAT {satz}%». Beim Weg klein gilt ui.<sprache>.vatLine wie bisher (mit «–» statt eines Betrags) — darum steht klein hier nicht: eine Stelle für einen Text.",
+     "properties": {
+      "regel": {"$ref": "#/$defs/zeile_je_sprache"}
+     }
+    }
+   }
+  },
+  "zeile_je_sprache": {
+   "type": "object", "required": ["de", "en"], "additionalProperties": {"type": "string"},
+   "description": "Ein Text je Sprache (de und en, weitere Sprachen erlaubt); welche Platzhalter darin gelten, sagt das Feld, das ihn führt."
+  }
+ }
+}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Creator-Profil einrichten · UGC-Werkstatt</title>
+<style>
+:root { color-scheme: light dark; --grund: #f7f6f0; --schrift: #202923; --rand: #a8b5ab; --akzent: #265d42; --flaeche: #e6eee3; }
+@media (prefers-color-scheme: dark) {
+  :root { --grund: #18201c; --schrift: #edf0e8; --rand: #53675b; --akzent: #a8d4b4; --flaeche: #27372c; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--grund); color: var(--schrift); font: 1rem/1.55 system-ui, sans-serif; }
+main { max-width: 60rem; margin: auto; padding: clamp(1rem, 5vw, 4rem); }
+header { border-top: .22rem solid var(--akzent); padding-top: 1rem; }
+header small { color: var(--akzent); font-weight: 650; }
+h1, h2 { margin: 0; line-height: 1.15; text-wrap: balance; }
+h1 { margin-top: .7rem; font: 550 clamp(2.15rem, 6vw, 3.75rem)/1.1 Georgia, serif; }
+h2 { font-size: 1.25rem; }
+p { margin: .55rem 0 0; max-width: 68ch; }
+header p { font-size: 1.12rem; }
+.profil { margin: 1.65rem 0; padding: 1.2rem 1.45rem; background: var(--flaeche); border-left: .25rem solid var(--akzent); }
+.wege { display: grid; gap: 1.5rem 2rem; }
+.wege section, .geraet { border-top: 1px solid var(--rand); padding-top: 1rem; }
+ol { margin: .8rem 0 0; padding-left: 1.5rem; }
+li { padding-left: .2rem; }
+li + li { margin-top: .65rem; }
+li::marker { font-weight: 700; color: var(--akzent); }
+code { overflow-wrap: anywhere; font: .93em ui-monospace, monospace; }
+.geraet { margin-top: 1.5rem; }
+@media (min-width: 46rem) { .wege { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body><main>
+<header><small>UGC-Werkstatt · Skill für Claude</small><h1>Creator-Profil einrichten</h1><p>Richtet das gemeinsame Profil für Preise, Steuerweg, Nische, Plattformen, Ton, persönliche Einstellungen und optionale Büro-Ordner ein.</p></header>
+<section class="profil"><h2>Zuerst das Creator-Profil</h2><p>Wähle unten Claude oder ChatGPT und richte dieses Paket dort ein. Starte mit „Richte mein Creator-Profil ein“. Die KI fragt nach deinen Preisen, deinem Steuerweg und deiner Arbeit. Bestätige die Angaben und speichere die fertige <code>profil.json</code>.</p></section>
+<div class="wege"><section><h2>Mit Claude</h2><ol><li>Öffne Einstellungen (Settings) → Fähigkeiten (Capabilities). Aktiviere „Code ausführen und Dateien erstellen“ (Code execution and file creation, im neuen Menü Create and edit files).</li><li>Öffne Anpassen (Customize) → Skills (Skills) → + → Skill erstellen (Create skill) → Skill hochladen (Upload a skill). Wähle das Skill-ZIP <code>creator-profil.zip</code> und schalte den Skill ein.</li><li>Öffne einen Chat im Büro-Projekt und starte das Interview. Lade die bestätigte Profildatei anschließend in das Projekt.</li></ol></section><section><h2>Mit ChatGPT</h2><ol><li>Öffne in der Seitenleiste „Neues Projekt“ (New project) oder dein vorhandenes Büro-Projekt.</li><li>Öffne das Projektmenü (•••) → Projekteinstellungen (Project settings). Füge dort die gemeinsame Projekt-Anweisung ein. Kopiere den Text aus <code>vorlagen/projekt-anweisung.md</code>.</li><li>Öffne das allgemeine Datei-Paket oder den ChatGPT-Download deines Produkts. Lade aus dem entpackten Download nur <code>werkstatt-creator-profil.txt</code> als Projektquelle hoch. In dasselbe Projekt kommen später die TXT-Dateien deiner weiteren Werkstatt-Produkte.</li><li>Starte das Interview in einem Projektchat. Lade anschließend die bestätigte Profildatei ins Projekt.</li></ol></section></div>
+<details class="geraet"><summary>Projektplätze und Updates in ChatGPT</summary><p>Die drei Produktdateien, deine profil.json und eine Auftragsdatei belegen fünf Projektplätze. Weitere Briefings, Bilder und Aufträge zählen mit, wenn du sie als Projektquellen speicherst.</p><p>Bei einem Update ersetzt du die alte TXT-Datei des Produkts. Bei einer Einrichtung mit vielen Einzeldateien sichere zuerst Profil und Aufträge. Ersetze dann die früheren Wissensdateien und die Paket-Anweisung durch die neue TXT-Datei und aktualisiere die Projekthinweise.</p></details>
+
+</main></body>
+</html>

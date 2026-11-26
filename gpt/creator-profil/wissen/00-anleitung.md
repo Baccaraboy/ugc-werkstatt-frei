@@ -1,0 +1,1 @@
+Im ChatGPT-Wissen liegen alle Python-Dateien nebeneinander. Führe `profil.py` dort aus. Die genannten Teile, Vorlagen und Textregeln findest du anhand ihrer Pfade als Abschnitte in `teile.md`, `vorlagen.md` und `regeln.md`. Formate einschließlich Beispielprofil stehen in `formate.json`, Preisstruktur in `regeln.json`.

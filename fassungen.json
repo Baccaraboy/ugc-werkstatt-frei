@@ -1,0 +1,94 @@
+[
+  {
+    "kennung": "creator-profil",
+    "art": "ki",
+    "name": "Creator-Profil",
+    "ladentext": {
+      "versprechen": "In etwa zehn Minuten fragt dich dein Chat nach deinen Preisen, deiner Nische und deinem Schreibstil. Daraus entsteht dein Profil. Alle drei Produkte der Werkstatt lesen es, wenn du einen Auftrag beginnst.",
+      "beispiel": "Du drehst Küchenvideos und schreibst Marken mit „du“ an. Du gibst fünf deiner Nachrichten als Beispiele mit. Wenn du später eine Anfrage zu einem Schneebrett beantwortest, kennt der Chat deine Anrede und greift auf deine hinterlegten Preise zu.",
+      "download": "Du bekommst den Fragenkatalog zum Einrichten, die gemeinsame Anweisung für dein Projekt und eine Anleitung. Am Ende des Gesprächs hast du deine persönliche Profildatei für die drei Produkte."
+    },
+    "stand": "2026-11-26",
+    "neu": "Im eigenen Büro fragt der Chat nach fehlenden Preisen und Einstellungen. Beispielwerte verwendet er nur, wenn du ausdrücklich um einen Probelauf bittest.",
+    "frei": true,
+    "laeuft": "überall",
+    "phase": "Jeden Tag",
+    "phase_nr": 15,
+    "station": "alltag",
+    "steckbrief": {
+      "rein": [
+        "deine Preise, deinen Steuerweg und Vorgaben",
+        "deine Themen und Plattformen",
+        "auf Wunsch eigene Stilproben und Büro-Ordner"
+      ],
+      "raus": [
+        "eine geprüfte profil.json für dein Büro",
+        "eine Projekt-Anweisung für alle drei Produkte"
+      ],
+      "fragt": [
+        "nach fehlenden Angaben oder Änderungswünschen"
+      ],
+      "haelt_ein": [
+        "beide Steuerwege",
+        "vorhandene Werte bleiben beim Lesen erhalten",
+        "Stil nur aus eigenen Nachrichten ableiten"
+      ],
+      "nie": [
+        "Zahlen für dich erfinden",
+        "eine vorhandene Datei still ersetzen"
+      ]
+    },
+    "fassung": "1.3",
+    "zuschnitt": [
+      "gpt",
+      "claude",
+      "datei"
+    ],
+    "downloads": {
+      "paket_zip": "paket/creator-profil-1.3.zip",
+      "claude_zip": "skills/creator-profil.zip",
+      "gpt": "gpt/creator-profil/"
+    }
+  },
+  {
+    "kennung": "safe-zones",
+    "art": "werkzeug",
+    "name": "Safe-Zone-Prüfer",
+    "stand": "2026-11-26",
+    "neu": "Safe-Zones behält Notiz und Markierungen beim Neuladen im selben Tab. Beim Leeren entfernt die Seite nur ihren eigenen Entwurf.",
+    "frei": true,
+    "laeuft": "überall",
+    "phase": "Schnitt",
+    "phase_nr": 9,
+    "station": "produktion",
+    "steckbrief": {
+      "rein": [
+        "Bild oder lokales Videostandbild",
+        "Zielplattform und Markierung"
+      ],
+      "raus": [
+        "Vorschau im Hochformat",
+        "Mögliche Verdeckung deiner Markierung",
+        "Transparente PNG-Überlagerung"
+      ],
+      "fragt": [],
+      "haelt_ein": [
+        "Nutzt den sichtbaren Hochformat-Ausschnitt",
+        "Liest dieselben Zonen wie die Video-Vorgabe",
+        "Zeigt die Flächen als Näherung"
+      ],
+      "nie": [
+        "garantiert die Ansicht in jeder App",
+        "lädt deine Medien hoch",
+        "ändert deine Originaldatei"
+      ]
+    },
+    "tests": 13,
+    "geeicht": true,
+    "fassung": "3.1",
+    "zuschnitt": [
+      "browser"
+    ],
+    "downloads": {}
+  }
+]

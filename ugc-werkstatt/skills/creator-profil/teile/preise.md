@@ -1,0 +1,3 @@
+# Preise
+
+P5a · 25.11.2026. Frage nach dem Grundhonorar, seinem Leistungsumfang und den Aufschlägen für Varianten, Nutzung, Dauer und Exklusivität. Nutze eine mitgebrachte Preisliste zuerst. Übertrage Beträge und Faktoren in `preise` gemäß `regeln/meine-preise.schema.json`. Halte die Herkunft in `preise.quelle` fest. Für fehlende Positionen frage nach den eigenen Beträgen, Faktoren oder der eigenen Preisliste. Bis die nötigen Angaben vorliegen, bleibt der Entwurf offen. Nur für einen ausdrücklich gewünschten Probelauf darfst du die erfundenen Preise aus `formate/beispiel-profil.json` in einer separaten Arbeitskopie verwenden. Kennzeichne ihre Herkunft in der Ausgabe. Regeln der Lieferung und echte Kundennamen gehören nicht in die Antworten.

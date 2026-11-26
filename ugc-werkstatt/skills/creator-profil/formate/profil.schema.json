@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werkstatt.example/formate/profil.schema.json",
+  "title": "Mein Profil",
+  "description": "Neuausrichtung, Phase 1 (23.11.2026). Das Profil des Creators: eine Datei je Creator, einmal beim Einrichten angelegt, danach von jedem Teil gelesen (Aufträge & Geld, Video-Vorgabe, Büro auf dem Mac). Es gehört dem Creator (Schicht Struktur): Ein Update ersetzt nur das Wissen und fasst diese Datei nie an. Preise und Steuerweg stehen genau einmal, in `preise` (die Struktur der Preisliste von «Anfrage → Angebot»); der Steuerweg ist `preise.steuer.vorgabe` mit dem Satz `preise.steuer.satz`. Das Creator-Profil leitet Ton und Stil aus den eigenen Stilproben ab. Alle Beispielwerte im Repo sind erfunden.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "formatfassung",
+    "angelegt_am",
+    "geaendert_am",
+    "preise",
+    "steuerlage",
+    "nische",
+    "plattformen",
+    "ton",
+    "sprechtempo",
+    "einstellungen"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "format": { "const": "profil" },
+    "formatfassung": {
+      "const": 2,
+      "description": "Die Fassung dieses Formats. Steigt nur, wenn sich ein Feld ändert; Updates der Lieferung wandeln ältere Dateien um, statt sie zu überschreiben. Fassung 2 (P3a, 24.11.2026): neues Feld `sprechtempo`; `formate/umwandeln.py` ergänzt es als null."
+    },
+    "angelegt_am": { "$ref": "gemeinsam.schema.json#/$defs/datum" },
+    "geaendert_am": { "$ref": "gemeinsam.schema.json#/$defs/datum" },
+    "creator": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Wie der Creator angesprochen und unterschrieben wird. Keine Adresse, keine Steuernummer: Die stehen nur in der Datei des Creators, wenn er sie angibt.",
+      "properties": {
+        "anzeigename": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+        "sitzland": {
+          "$ref": "gemeinsam.schema.json#/$defs/einzeilig",
+          "description": "Für Vertragsprüfung und Steuerweg, zum Beispiel Deutschland."
+        }
+      }
+    },
+    "preise": {
+      "$ref": "https://github.com/Baccaraboy/n8n-baccaratv/geteilt/ratecard.schema.json",
+      "description": "Die Preise des Creators: genau die Struktur von `pakete/auftraege-und-geld/regeln/meine-preise.schema.json` (Preisliste mit Basishonorar, sieben Dimensionen, Aufschlägen für Nutzung, Dauer, Exklusivität und dem Block `steuer`). Das ist ein Verweis, keine Kopie: Das Schema bleibt dort (seit P2a, 23.11.2026, im Paket «Aufträge & Geld»); ein Tor hält es gleich dem der NAS. Werte im Beispiel sind Beispielpreise."
+    },
+    "steuerlage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ruecklage_satz_prozent"],
+      "description": "Alles zur Steuer, was nicht in `preise.steuer` steht. Der Weg selbst (klein oder regel) steht nur dort. Der Creator klärt mit seiner Steuerberatung, ob er Kleinunternehmer ist; die Lieferung berät nicht.",
+      "properties": {
+        "ruecklage_satz_prozent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 60,
+          "description": "Anteil des Gewinns, der zurückgelegt wird (für die Steuer-Rücklage)."
+        },
+        "regelbesteuerung_ab": {
+          "$ref": "gemeinsam.schema.json#/$defs/datum_oder_null",
+          "description": "Ab wann der Creator voraussichtlich umsatzsteuerpflichtig ist, sonst null. Beide Steuerwege gelten immer als möglich (Regel «Zwei Steuerwege»)."
+        }
+      }
+    },
+    "nische": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["themen", "videoarten"],
+      "description": "Wofür der Creator steht. Die Warnzeichen und Passt-nicht-Urteile der Lieferung lesen es.",
+      "properties": {
+        "vorstellungssatz": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+        "themen": {
+          "type": "array",
+          "items": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+          "minItems": 1,
+          "maxItems": 10
+        },
+        "videoarten": {
+          "type": "array",
+          "items": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+          "minItems": 1,
+          "maxItems": 10,
+          "description": "Zum Beispiel Talking Head, Produkt in der Hand, Unboxing."
+        },
+        "ausgeschlossen": {
+          "type": "array",
+          "items": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+          "maxItems": 20,
+          "description": "Branchen oder Produkte, für die der Creator nicht arbeitet."
+        }
+      }
+    },
+    "plattformen": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["plattform"],
+        "properties": {
+          "plattform": { "$ref": "gemeinsam.schema.json#/$defs/plattform" },
+          "schwerpunkt": { "type": "boolean", "description": "Hier liefert der Creator am liebsten." },
+          "profilname": {
+            "$ref": "gemeinsam.schema.json#/$defs/einzeilig",
+            "description": "Nur der Name des Profils, nie ein Zugang."
+          }
+        }
+      }
+    },
+    "ton": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["anrede", "ton", "satzlaenge", "wendungen", "emojis", "grussformel", "nie"],
+      "description": "Der Schreibstil des Creators, den das Creator-Profil aus eigenen Nachrichten ermittelt (Anrede, Ton, Satzlänge, Wendungen, Emojis, Grußformel, Nie). Belege sind kurze, anonyme Wortlaute. Fehlt eine Grundlage, steht dort «nicht belegt».",
+      "properties": {
+        "anrede": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+        "ton": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+        "satzlaenge": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+        "wendungen": { "type": "array", "items": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" }, "maxItems": 12 },
+        "emojis": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+        "grussformel": {
+          "$ref": "gemeinsam.schema.json#/$defs/einzeilig",
+          "description": "Der Abschiedsgruß ohne Namen."
+        },
+        "nie": { "type": "array", "items": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" }, "maxItems": 12 },
+        "stilproben": {
+          "type": "array",
+          "maxItems": 10,
+          "items": { "type": "string", "minLength": 1, "maxLength": 600 },
+          "description": "Fünf bis zehn eigene gesendete Nachrichten, anonym und gekürzt. Nur was der Creator selbst eingefügt hat."
+        },
+        "ermittelt_am": { "$ref": "gemeinsam.schema.json#/$defs/datum" }
+      }
+    },
+    "sprechtempo": {
+      "description": "Wie schnell der Creator spricht, in Wörtern pro Minute. Daraus rechnet `sprechzeit.py` der Video-Vorgabe die Länge eines Sprechtexts und das Feld `woerter_je_sekunde` (Wörter pro Minute geteilt durch 60). null heißt, dass das persönliche Tempo noch offen ist. Ohne Angabe im Auftrag bleiben die Sekunden offen. Ein Beispieltempo dient ausschließlich einem ausdrücklich gewünschten Probelauf. Gemessen wird an einem eigenen, gesprochenen Video; der Creator gibt Wortzahl und Dauer an, das Skript rechnet.",
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["woerter_je_minute"],
+          "properties": {
+            "woerter_je_minute": { "type": "number", "minimum": 60, "maximum": 300 },
+            "ermittelt_am": { "$ref": "gemeinsam.schema.json#/$defs/datum" },
+            "aus": {
+              "$ref": "gemeinsam.schema.json#/$defs/einzeilig",
+              "description": "Woher der Wert stammt, zum Beispiel «eigenes Video, 61 Wörter in 25 Sekunden»."
+            }
+          }
+        }
+      ]
+    },
+    "einstellungen": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "anrede_marken",
+        "zaehlweise",
+        "erinnerung_vorlauf_tage",
+        "zahlungsziel_tage",
+        "korrekturrunden_inklusive"
+      ],
+      "description": "Die persönlichen Wahlen, die heute in den Regeldateien einzelner Pakete als Vorgabe stehen (Anrede der Marke, Zählweise von Laufzeiten, Vorlauf der Erinnerung, Zahlungsziel, Korrekturrunden). Die Regeln der Lieferung behalten ihre Vorgaben; hier steht, was der Creator gewählt hat, und das gilt für jeden Teil. Eine Frage kommt nur, wenn ein Wert fehlt und ohne ihn kein Ergebnis möglich ist.",
+      "properties": {
+        "anrede_marken": { "type": "string", "enum": ["du", "Sie"] },
+        "zaehlweise": {
+          "type": "string",
+          "enum": ["kalendermonate", "tage"],
+          "description": "Wie Laufzeiten der Rechte gezählt werden (Regel `fristen.json` in «Aufträge & Geld»)."
+        },
+        "erinnerung_vorlauf_tage": { "type": "integer", "enum": [7, 14, 30] },
+        "zahlungsziel_tage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 90,
+          "description": "Vorgabe für neue Rechnungen."
+        },
+        "korrekturrunden_inklusive": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5,
+          "description": "So viele Korrekturrunden sind im Preis enthalten; jede weitere ist Zusatzarbeit."
+        }
+      }
+    },
+    "buero": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Nur für «Büro auf dem Mac»: wo der Creator seine Ordner hat. Pfade stehen nur in seiner eigenen Datei. Der Ordnerplan (Wissen) kommt aus der Lieferung, hier steht nur die Wahl.",
+      "properties": {
+        "auftragsordner": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+        "eingang": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+        "export": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" },
+        "sicherungsziel": { "$ref": "gemeinsam.schema.json#/$defs/einzeilig" }
+      }
+    }
+  }
+}
