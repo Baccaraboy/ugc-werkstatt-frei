@@ -1,15 +1,16 @@
-# UGC-Werkstatt — die freien Pakete
+# UGC-Werkstatt – Creator-Profil und Safe-Zones
 
-Pakete für deine eigene KI (Claude oder ChatGPT): eine Anweisung, Regeln als Dateien, Vorlagen und Beispiele — einmal
-eingebaut, für immer genutzt. Dieses Repo trägt die **freien** Pakete, gebaut aus dem Bau-Repo der Werkstatt; von Hand
-wird hier nichts geändert.
+Mit dem kostenlosen Creator-Profil richtest du Preise, Nische und Schreibstil für deine Werkstatt ein. Mit Safe-Zones prüfst du am Standbild, was eine App im Video verdeckt.
 
-## Einbau
+## Einrichten
 
-- **Claude Code:** `/plugin marketplace add Baccaraboy/ugc-werkstatt-frei`, dann `/plugin install ugc-werkstatt`.
-- **Claude-App:** das Zip eines Pakets aus `skills/` unter Einstellungen › Fähigkeiten hochladen.
-- **ChatGPT und andere:** das Zip aus `paket/` laden, `prompt.md` als Anweisung eines Projekts einfügen, `regeln/` und
-  `vorlagen/` dazulegen.
+- **ChatGPT oder Claude-Projekt** – Lade das versionierte ZIP aus `paket/`, entpacke es und öffne `Anleitung.html`.
+- **Claude-App** – Lade `skills/creator-profil.zip` als Skill hoch.
+- **Claude Code** – Gib `/plugin marketplace add Baccaraboy/ugc-werkstatt-frei` ein und installiere dann `ugc-werkstatt` von diesem Marktplatz.
+- **Safe-Zones** – Lade `werkzeug/safe-zones.html` herunter und öffne die Datei im Browser.
 
-Die Pakete erscheinen hier mit der ersten Veröffentlichung (`fassungen.json` listet sie). Lizenz und Nutzungsbedingungen
-folgen mit der ersten Fassung.
+## Veröffentlichung
+
+Die GitHub Action „Freie Werkstatt aktualisieren“ lädt das Gratisarchiv und die zugehörige SHA-256-Datei von der [Werkstatt](https://marius-ugc.de/werkstatt). Sie prüft die Lieferung und aktualisiert die Produktdateien gemeinsam in einem Commit. In `fassungen.json` findest du die veröffentlichten Fassungen.
+
+Nach einer Änderung am Workflow und alle sechs Stunden prüft die Action auf eine neue Lieferung. Über **Actions → Freie Werkstatt aktualisieren → Run workflow** kannst du sie auf `main` erneut starten. Bei einer unerreichbaren Quelle oder einer ungültigen Lieferung bleibt der zuletzt veröffentlichte Stand verfügbar. Die Action nutzt das GitHub-Token dieses Repos.
